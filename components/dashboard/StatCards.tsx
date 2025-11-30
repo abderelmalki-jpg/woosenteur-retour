@@ -55,7 +55,7 @@ export const ProductCard = memo(({ product, onClick }: ProductCardProps) => {
       onClick={onClick}
     >
       {/* Image placeholder */}
-      <div className="w-full h-40 bg-gradient-to-br from-violet-100 to-pink-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+      <div className="w-full h-40 bg-gradient-to-br from-violet-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
         {product.imageUrl ? (
           <img 
             src={product.imageUrl} 
@@ -71,7 +71,7 @@ export const ProductCard = memo(({ product, onClick }: ProductCardProps) => {
       {/* Infos produit */}
       <div className="space-y-3">
         <div>
-          <h3 className="font-semibold text-slate-900 line-clamp-1 group-hover:text-[#C1292E] transition-colors">
+          <h3 className="font-semibold text-slate-900 line-clamp-1 group-hover:text-violet-600 transition-colors">
             {product.productName}
           </h3>
           <p className="text-sm text-slate-600 line-clamp-1">{product.brand}</p>

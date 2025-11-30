@@ -40,7 +40,7 @@ export default function AdminLoginButton() {
         onClick={handleAdminLogin}
         disabled={loading || success}
         variant="outline"
-        className="w-full border-amber-500/30 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20"
+        className="w-full border-violet-500/30 bg-gradient-to-r from-violet-500/10 to-purple-500/10 hover:from-violet-500/20 hover:to-purple-500/20"
       >
         {loading ? (
           <>

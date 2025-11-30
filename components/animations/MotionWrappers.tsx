@@ -145,7 +145,7 @@ export function LoadingDots({ className = '' }: LoadingDotsProps) {
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="w-2 h-2 bg-[#C1292E] rounded-full"
+          className="w-2 h-2 bg-violet-600 rounded-full"
           animate={{
             y: [0, -10, 0],
           }}
@@ -169,7 +169,7 @@ export function ProgressBar({ progress, className = '' }: ProgressBarProps) {
   return (
     <div className={`h-2 bg-slate-200 rounded-full overflow-hidden ${className}`}>
       <motion.div
-        className="h-full bg-gradient-to-r from-[#C1292E] to-[#F46036]"
+        className="h-full bg-gradient-to-r from-violet-600 to-purple-600"
         initial={{ width: 0 }}
         animate={{ width: `${progress}%` }}
         transition={{ duration: 0.5, ease: 'easeOut' }}

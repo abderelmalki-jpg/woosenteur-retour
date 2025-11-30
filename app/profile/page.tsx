@@ -112,7 +112,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 animate-spin text-[#C1292E] mx-auto" />
+          <Loader2 className="w-12 h-12 animate-spin text-violet-600 mx-auto" />
           <p className="text-slate-600">Chargement de votre profil...</p>
         </div>
       </div>
@@ -298,7 +298,7 @@ export default function ProfilePage() {
               {currentPlan === 'free' ? (
                 <Button
                   onClick={() => router.push('/pricing')}
-                  className="bg-[#C1292E] hover:bg-[#A01F25] text-white"
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg shadow-violet-500/30"
                 >
                   Upgrader mon plan
                   <ExternalLink className="w-4 h-4 ml-2" />

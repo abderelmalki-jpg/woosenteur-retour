@@ -9,7 +9,7 @@ import BeforeAfterSection from "@/components/landing/BeforeAfterSection";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 dark:from-slate-950 dark:via-violet-950 dark:to-slate-950">
       
       {/* Hero Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center max-w-5xl">
@@ -19,19 +19,19 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center mb-6">
-          <Badge className="bg-gradient-to-r from-violet-500/10 to-pink-500/10 text-[#C1292E] dark:text-[#F46036] border-[#C1292E]/30 dark:border-[#F46036]/30 text-sm py-1 px-4">
+          <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-sm py-1 px-4">
             ✨ Propulsé par l'IA Gemini 2.0
           </Badge>
         </div>
         
         <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight px-2">
-          De <span className="text-[#C1292E] dark:text-[#F46036]">3 Heures</span> à{" "}
-          <span className="text-[#F46036] dark:text-[#C1292E]">3 Minutes</span>
+          De <span className="text-violet-600 dark:text-violet-400">3 Heures</span> à{" "}
+          <span className="text-purple-600 dark:text-purple-400">3 Minutes</span>
         </h1>
         
         <p className="text-base sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 mb-8 leading-relaxed max-w-3xl mx-auto px-4">
           Générez des fiches produits WooCommerce optimisées pour le SEO avec{" "}
-          <span className="font-semibold text-[#C1292E] dark:text-[#F46036]">83% de score Rank Math garanti</span>{" "}
+          <span className="font-semibold text-violet-600 dark:text-violet-400">83% de score Rank Math garanti</span>{" "}
           pour vos parfums, cosmétiques et soins.
         </p>
         
@@ -39,7 +39,7 @@ export default function Home() {
           <Button 
             asChild
             size="lg"
-            className="bg-[#C1292E] hover:bg-[#A01F25] text-white text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
+            className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto shadow-lg shadow-violet-500/50"
           >
             <Link href="/register" className="flex items-center justify-center">
               <Sparkles className="mr-2 h-5 w-5" />
@@ -50,7 +50,7 @@ export default function Home() {
             asChild
             size="lg"
             variant="outline"
-            className="border-2 border-[#C1292E] text-[#C1292E] hover:bg-[#C1292E] hover:text-white text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
+            className="border-2 border-violet-600 text-violet-600 hover:bg-gradient-to-r hover:from-violet-600 hover:to-purple-600 hover:text-white text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
           >
             <Link href="/pricing" className="flex items-center justify-center">
               Voir les tarifs
@@ -62,11 +62,11 @@ export default function Home() {
         {/* Stats rapides */}
         <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto px-4">
           <div className="space-y-2">
-            <p className="text-4xl font-bold text-[#C1292E]">83%</p>
+            <p className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">83%</p>
             <p className="text-sm text-slate-600">Score SEO moyen</p>
           </div>
           <div className="space-y-2">
-            <p className="text-4xl font-bold text-[#F46036]">3 min</p>
+            <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">3 min</p>
             <p className="text-sm text-slate-600">Temps de génération</p>
           </div>
           <div className="space-y-2">
@@ -102,21 +102,21 @@ export default function Home() {
               title: "Entrez les informations",
               description: "Saisissez simplement le nom du produit, la marque et la catégorie. Notre IA fait le reste.",
               icon: Target,
-              color: "from-violet-500 to-purple-600"
+              color: "from-violet-600 to-purple-600"
             },
             {
               step: "2",
               title: "L'IA génère la fiche",
               description: "En 3 minutes, recevez une description optimisée SEO avec titre, mots-clés et notes olfactives.",
               icon: Sparkles,
-              color: "from-pink-500 to-rose-600"
+              color: "from-purple-600 to-indigo-600"
             },
             {
               step: "3",
               title: "Exportez vers WooCommerce",
               description: "Exportez directement vers votre boutique ou téléchargez en CSV. Prêt à vendre !",
               icon: CheckCircle2,
-              color: "from-amber-500 to-orange-600"
+              color: "from-indigo-600 to-violet-600"
             }
           ].map((item, index) => (
             <Card key={index} className="p-8 border-2 bg-white hover:shadow-xl transition-all relative overflow-hidden group">
@@ -260,7 +260,7 @@ export default function Home() {
               </p>
               
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-400 to-pink-400 flex items-center justify-center text-white font-bold">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold">
                   {testimonial.avatar}
                 </div>
                 <div>
@@ -326,11 +326,11 @@ export default function Home() {
             <Card 
               key={index} 
               className={`p-6 border-2 bg-white hover:shadow-xl transition-all ${
-                plan.highlighted ? 'ring-2 ring-[#C1292E] scale-105' : ''
+                plan.highlighted ? 'ring-2 ring-violet-600 scale-105' : ''
               }`}
             >
               {plan.highlighted && (
-                <Badge className="mb-4 w-full bg-[#C1292E] text-white">
+                <Badge className="mb-4 w-full bg-gradient-to-r from-violet-600 to-purple-600 text-white">
                   ⭐ Plus populaire
                 </Badge>
               )}
@@ -341,7 +341,7 @@ export default function Home() {
                 <span className="text-slate-600">{plan.period}</span>
               </div>
               
-              <p className="text-sm font-semibold text-[#C1292E] mb-6">{plan.credits}</p>
+              <p className="text-sm font-semibold text-violet-600 mb-6">{plan.credits}</p>
               
               <ul className="space-y-3 mb-6">
                 {plan.features.map((feature, i) => (
@@ -356,7 +356,7 @@ export default function Home() {
                 asChild
                 className={`w-full ${
                   plan.highlighted 
-                    ? 'bg-[#C1292E] hover:bg-[#A01F25] text-white' 
+                    ? 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg shadow-violet-500/30' 
                     : 'bg-white border-2 border-slate-200 text-slate-900 hover:bg-slate-50'
                 }`}
               >
@@ -378,7 +378,7 @@ export default function Home() {
 
       {/* CTA Final */}
       <section className="container mx-auto px-4 py-20">
-        <Card className="p-12 md:p-16 border-2 bg-gradient-to-br from-[#C1292E] to-[#F46036] text-white text-center max-w-4xl mx-auto">
+        <Card className="p-12 md:p-16 border-2 bg-gradient-to-br from-violet-600 to-purple-600 text-white text-center max-w-4xl mx-auto shadow-2xl shadow-violet-500/50">
           <h2 className="text-4xl md:text-5xl font-bold font-serif mb-6">
             Prêt à transformer votre boutique beauté ?
           </h2>
@@ -390,7 +390,7 @@ export default function Home() {
             <Button 
               asChild
               size="lg"
-              className="bg-white text-[#C1292E] hover:bg-slate-100 text-lg px-8 py-6"
+              className="bg-white text-violet-600 hover:bg-violet-50 text-lg px-8 py-6 shadow-lg"
             >
               <Link href="/register">
                 <Sparkles className="mr-2 h-5 w-5" />

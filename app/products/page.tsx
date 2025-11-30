@@ -219,9 +219,9 @@ export default function ProductsPage() {
   // Affichage pendant le chargement
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 flex items-center justify-center px-4">
         <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 animate-spin text-[#C1292E] mx-auto" />
+          <Loader2 className="w-12 h-12 animate-spin text-violet-600 mx-auto" />
           <p className="text-sm sm:text-base text-slate-600">Chargement de vos produits...</p>
         </div>
       </div>
@@ -233,7 +233,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         
         {/* En-tête */}
@@ -364,7 +364,7 @@ export default function ProductsPage() {
             </div>
             {!searchQuery && selectedCategory === 'Tous' && (
               <Button 
-                className="bg-[#C1292E] hover:bg-[#A01F25] text-white"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg shadow-violet-500/30"
                 onClick={() => router.push('/generate')}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -381,7 +381,7 @@ export default function ProductsPage() {
                 type="checkbox"
                 checked={selectedIds.size === filteredProducts.length && filteredProducts.length > 0}
                 onChange={toggleSelectAll}
-                className="w-4 h-4 rounded border-slate-300 text-[#C1292E] focus:ring-[#C1292E]"
+                className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-600"
               />
               <span className="text-sm text-slate-600">Tout sélectionner</span>
             </div>
@@ -392,7 +392,7 @@ export default function ProductsPage() {
                 <Card 
                   key={product.id} 
                   className={`p-6 border-2 hover:shadow-lg transition-all bg-white ${
-                    selectedIds.has(product.id) ? 'ring-2 ring-[#C1292E]' : ''
+                    selectedIds.has(product.id) ? 'ring-2 ring-violet-600' : ''
                   }`}
                 >
                   <div className="flex items-center gap-6">
@@ -402,12 +402,12 @@ export default function ProductsPage() {
                       type="checkbox"
                       checked={selectedIds.has(product.id)}
                       onChange={() => toggleSelection(product.id)}
-                      className="w-5 h-5 rounded border-slate-300 text-[#C1292E] focus:ring-[#C1292E]"
+                      className="w-5 h-5 rounded border-slate-300 text-violet-600 focus:ring-violet-600"
                       onClick={(e) => e.stopPropagation()}
                     />
 
                     {/* Image */}
-                    <div className="w-20 h-20 bg-gradient-to-br from-violet-100 to-pink-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="w-20 h-20 bg-gradient-to-br from-violet-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {product.imageUrl ? (
                         <img 
                           src={product.imageUrl} 

@@ -16,13 +16,13 @@ export default function BeforeAfterSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#C1292E]/10 to-[#F46036]/10 rounded-full mb-4">
-            <TrendingUp className="w-5 h-5 text-[#C1292E]" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600/10 to-purple-600/10 rounded-full mb-4">
+            <TrendingUp className="w-5 h-5 text-violet-600" />
             <span className="text-sm font-semibold text-slate-900 dark:text-white">
               Résultats SEO Garantis
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#C1292E] to-[#F46036] bg-clip-text text-transparent mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-4">
             De 30% à 83% en 3 Minutes
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
@@ -71,7 +71,7 @@ export default function BeforeAfterSection() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="hidden md:flex absolute left-1/2 -translate-x-1/2 z-10 w-16 h-16 bg-gradient-to-r from-[#C1292E] to-[#F46036] rounded-full items-center justify-center shadow-2xl"
+            className="hidden md:flex absolute left-1/2 -translate-x-1/2 z-10 w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-600 rounded-full items-center justify-center shadow-2xl"
           >
             <ArrowRight className="w-8 h-8 text-white" />
           </motion.div>
@@ -85,7 +85,7 @@ export default function BeforeAfterSection() {
             className="relative"
           >
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-2xl p-8 border-2 border-green-300 dark:border-green-700">
-              <div className="absolute -top-4 left-6 bg-gradient-to-r from-[#C1292E] to-[#F46036] text-white px-4 py-1 rounded-full text-sm font-bold">
+              <div className="absolute -top-4 left-6 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold">
                 ✅ APRÈS WooSenteur
               </div>
               <div className="space-y-4 mt-4">

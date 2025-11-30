@@ -17,7 +17,7 @@ export default function HeroLogo() {
       className="relative"
     >
       {/* Effet glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#C1292E]/30 to-[#F46036]/30 blur-3xl animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-600/30 to-purple-600/30 blur-3xl animate-pulse" />
       
       {/* Logo */}
       <div className="relative w-48 h-48 flex items-center justify-center">
@@ -36,7 +36,7 @@ export default function HeroLogo() {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
-        className="absolute -bottom-2 -right-2 bg-gradient-to-r from-[#C1292E] to-[#F46036] text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg"
+        className="absolute -bottom-2 -right-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg"
       >
         ✨ IA
       </motion.div>

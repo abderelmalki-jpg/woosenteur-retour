@@ -46,7 +46,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <AnimatedLogo className="w-10 h-10 group-hover:scale-110 transition-transform duration-300" />
-            <span className="font-heading text-2xl font-bold bg-gradient-to-r from-[#C1292E] via-[#F46036] to-[#C1292E] bg-clip-text text-transparent">
+            <span className="font-heading text-2xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
               WooSenteur
             </span>
           </Link>
@@ -71,7 +71,7 @@ export default function Header() {
                 {/* Badge Crédits ou Admin */}
                 {userProfile && (
                   userProfile.isUnlimited || userProfile.role === 'superadmin' ? (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-full border border-amber-500/30">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-violet-500/10 to-indigo-500/10 rounded-full border border-violet-500/30">
                       <Shield className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                       <span className="text-sm font-bold text-amber-700 dark:text-amber-400">ADMIN</span>
                       <span className="text-xs text-amber-600 dark:text-amber-400">∞ crédits</span>

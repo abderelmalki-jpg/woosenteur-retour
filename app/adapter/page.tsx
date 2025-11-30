@@ -132,10 +132,10 @@ export default function AdapterPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 flex items-center justify-center px-4">
         <Card className="p-8 max-w-md text-center">
           <p className="text-slate-600 mb-4">Connectez-vous pour adapter vos produits</p>
-          <Button onClick={() => router.push('/login')} className="bg-[#C1292E]">
+          <Button onClick={() => router.push('/login')} className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 shadow-lg shadow-violet-500/30">
             Se connecter
           </Button>
         </Card>
@@ -144,7 +144,7 @@ export default function AdapterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <FadeIn>
@@ -169,7 +169,7 @@ export default function AdapterPage() {
                 <Card
                   className={`p-6 cursor-pointer transition-all hover:shadow-lg border-2 ${
                     isSelected 
-                      ? 'border-[#C1292E] bg-gradient-to-br from-rose-50 to-pink-50' 
+                      ? 'border-violet-600 bg-gradient-to-br from-violet-50 to-purple-50' 
                       : 'border-transparent hover:border-slate-300'
                   }`}
                   onClick={() => setSelectedEvent(event)}
@@ -203,10 +203,10 @@ export default function AdapterPage() {
 
         {selectedEvent && (
           <FadeIn delay={0.3}>
-            <Card className="p-8 border-2 border-[#C1292E] bg-white">
+            <Card className="p-8 border-2 border-violet-600 bg-white shadow-xl shadow-violet-500/20">
               <div className="text-center space-y-4">
-                <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#C1292E]/10 rounded-full">
-                  <Sparkles className="w-5 h-5 text-[#C1292E]" />
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-violet-600/10 rounded-full">
+                  <Sparkles className="w-5 h-5 text-violet-600" />
                   <span className="font-semibold text-slate-900">
                     Événement sélectionné : {selectedEvent.name}
                   </span>
@@ -230,7 +230,7 @@ export default function AdapterPage() {
                   <Button
                     onClick={handleAdapt}
                     disabled={!selectedProduct || loading}
-                    className="bg-[#C1292E] hover:bg-[#A01F25]"
+                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 shadow-lg shadow-violet-500/30"
                   >
                     {loading ? (
                       <>

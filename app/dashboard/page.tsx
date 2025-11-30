@@ -118,14 +118,14 @@ export default function DashboardPage() {
     });
   }, [products]);
 
-  const COLORS = ['#C1292E', '#F46036', '#9C27B0', '#2196F3', '#4CAF50'];
+  const COLORS = ['#7C3AED', '#A78BFA', '#C4B5FD', '#8B5CF6', '#6D28D9'];
 
   // Affichage pendant le chargement
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 flex items-center justify-center px-4">
         <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 animate-spin text-[#C1292E] mx-auto" />
+          <Loader2 className="w-12 h-12 animate-spin text-violet-600 mx-auto" />
           <p className="text-sm sm:text-base text-slate-600">Chargement de votre tableau de bord...</p>
         </div>
       </div>
@@ -151,7 +151,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         
         {/* En-tête */}
@@ -262,10 +262,10 @@ export default function DashboardPage() {
         {/* Actions rapides */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <Card className="p-6 border-2 bg-gradient-to-br from-[#C1292E]/5 to-[#F46036]/5 hover:shadow-lg transition-all">
+          <Card className="p-6 border-2 bg-gradient-to-br from-violet-600/5 to-purple-600/5 hover:shadow-lg transition-all border-violet-200 dark:border-violet-800">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#C1292E] rounded-lg">
+                <div className="p-2 bg-gradient-to-br from-violet-600 to-purple-600 rounded-lg">
                   <Plus className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -274,7 +274,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <Button 
-                className="w-full bg-[#C1292E] hover:bg-[#A01F25] text-white"
+                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg shadow-violet-500/30"
                 onClick={() => router.push('/generate')}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
@@ -331,8 +331,8 @@ export default function DashboardPage() {
                     <YAxis style={{ fontSize: '12px' }} />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="générations" stroke="#C1292E" strokeWidth={2} />
-                    <Line type="monotone" dataKey="exports" stroke="#F46036" strokeWidth={2} />
+                    <Line type="monotone" dataKey="générations" stroke="#7C3AED" strokeWidth={2} />
+                    <Line type="monotone" dataKey="exports" stroke="#A78BFA" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -393,7 +393,7 @@ export default function DashboardPage() {
               <Button 
                 variant="ghost" 
                 onClick={() => router.push('/products')}
-                className="text-[#C1292E] hover:text-[#A01F25]"
+                className="text-violet-600 hover:text-purple-600 transition-colors"
               >
                 Voir tout
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -414,7 +414,7 @@ export default function DashboardPage() {
                 </p>
               </div>
               <Button 
-                className="bg-[#C1292E] hover:bg-[#A01F25] text-white"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg shadow-violet-500/30"
                 onClick={() => router.push('/generate')}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -431,7 +431,7 @@ export default function DashboardPage() {
                     onClick={() => router.push(`/products/${product.id}`)}
                   >
                     {/* Image placeholder */}
-                    <div className="w-full h-40 bg-gradient-to-br from-violet-100 to-pink-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-40 bg-gradient-to-br from-violet-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                       {product.imageUrl ? (
                         <img 
                           src={product.imageUrl} 
@@ -446,7 +446,7 @@ export default function DashboardPage() {
                     {/* Infos produit */}
                     <div className="space-y-3">
                       <div>
-                        <h3 className="font-semibold text-slate-900 line-clamp-1 group-hover:text-[#C1292E] transition-colors">
+                        <h3 className="font-semibold text-slate-900 line-clamp-1 group-hover:text-violet-600 transition-colors">
                           {product.productName}
                         </h3>
                         <p className="text-sm text-slate-600 line-clamp-1">{product.brand}</p>
