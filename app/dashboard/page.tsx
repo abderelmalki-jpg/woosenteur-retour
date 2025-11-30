@@ -20,8 +20,10 @@ import {
   AlertCircle,
   Package,
   CheckCircle2,
-  Clock
+  Clock,
+  BarChart3
 } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -69,6 +71,35 @@ export default function DashboardPage() {
       ? Math.round(products.reduce((acc, p) => acc + (p.confidenceScore || 0), 0) / products.length)
       : 0
   };
+
+  // Données pour graphiques
+  const categoryData = products.reduce((acc, product) => {
+    const cat = product.category || 'Non catégorisé';
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const categoryChartData = Object.entries(categoryData)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+
+  // Données activité (7 derniers jours simulés)
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    const dayProducts = products.filter(p => {
+      const pDate = new Date(p.generationDate);
+      return pDate.toDateString() === date.toDateString();
+    });
+    return {
+      date: date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
+      générations: dayProducts.length,
+      exports: dayProducts.filter(p => p.tags?.includes('exported')).length,
+    };
+  });
+
+  const COLORS = ['#C1292E', '#F46036', '#9C27B0', '#2196F3', '#4CAF50'];
 
   // Affichage pendant le chargement
   if (authLoading || loading) {
@@ -257,6 +288,75 @@ export default function DashboardPage() {
           </Card>
 
         </div>
+
+        {/* Graphiques Analytics */}
+        {products.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Activité 7 derniers jours */}
+            <Card className="p-6 border-2 bg-white">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <BarChart3 className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900">Activité (7 derniers jours)</h3>
+                  <p className="text-xs text-slate-600">Générations et exports quotidiens</p>
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={last7Days}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="date" style={{ fontSize: '12px' }} />
+                    <YAxis style={{ fontSize: '12px' }} />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="générations" stroke="#C1292E" strokeWidth={2} />
+                    <Line type="monotone" dataKey="exports" stroke="#F46036" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* Distribution catégories */}
+            {categoryChartData.length > 0 && (
+              <Card className="p-6 border-2 bg-white">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Package className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900">Top 5 Catégories</h3>
+                    <p className="text-xs text-slate-600">Répartition de vos produits</p>
+                  </div>
+                </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryChartData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {categoryChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            )}
+
+          </div>
+        )}
 
         {/* Message d'alerte si erreur */}
         {error && (

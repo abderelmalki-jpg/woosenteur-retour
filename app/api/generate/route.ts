@@ -7,9 +7,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateProductFlow, requiresUserConfirmation } from '@/lib/genkit/flows/generateProduct';
 import { auth, db } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { createRateLimiter } from '@/lib/middleware/rateLimit';
+
+// Rate limiter: 10 générations par minute
+const rateLimiter = createRateLimiter({
+  maxRequests: 10,
+  windowMs: 60 * 1000,
+  message: 'Trop de générations. Veuillez patienter 1 minute.',
+});
 
 export async function POST(request: NextRequest) {
   try {
+    // 0. Rate limiting
+    const rateLimitResponse = await rateLimiter(request);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     // 1. Authentification
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {

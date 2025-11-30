@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  // output: 'export', // Commenté pour permettre API routes serveur (development)
   images: {
     unoptimized: true,
   },
