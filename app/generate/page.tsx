@@ -119,11 +119,17 @@ function GeneratePageContent() {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
 
-      // Appel API
+      // Appel API avec authentification
+      if (!user) {
+        throw new Error('Utilisateur non connecté');
+      }
+      
+      const idToken = await user.getIdToken();
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({ productName, brand, category }),
       });
