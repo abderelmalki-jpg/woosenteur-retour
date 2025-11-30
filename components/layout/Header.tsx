@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import AnimatedLogo from '@/components/branding/AnimatedLogo';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -43,9 +44,9 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Sparkles className="h-6 w-6 text-[#6B46C1] dark:text-[#9333EA] group-hover:rotate-12 transition-transform" />
-            <span className="font-heading text-2xl font-bold bg-gradient-to-r from-[#6B46C1] to-[#9333EA] bg-clip-text text-transparent">
+          <Link href="/" className="flex items-center gap-3 group">
+            <AnimatedLogo className="w-10 h-10 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-heading text-2xl font-bold bg-gradient-to-r from-[#C1292E] via-[#F46036] to-[#C1292E] bg-clip-text text-transparent">
               WooSenteur
             </span>
           </Link>

@@ -3,27 +3,33 @@ import { Sparkles, Zap, Shield, TrendingUp, CheckCircle2, ArrowRight, Star, Cloc
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import HeroLogo from "@/components/branding/HeroLogo";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       
       {/* Hero Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center max-w-5xl">
+        {/* Logo Hero */}
+        <div className="flex justify-center mb-8">
+          <HeroLogo />
+        </div>
+
         <div className="flex justify-center mb-6">
-          <Badge className="bg-gradient-to-r from-violet-500/10 to-pink-500/10 text-[#C1292E] border-[#C1292E]/30 text-sm py-1 px-4">
+          <Badge className="bg-gradient-to-r from-violet-500/10 to-pink-500/10 text-[#C1292E] dark:text-[#F46036] border-[#C1292E]/30 dark:border-[#F46036]/30 text-sm py-1 px-4">
             ✨ Propulsé par l'IA Gemini 2.0
           </Badge>
         </div>
         
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight px-2">
-          De <span className="text-[#C1292E]">3 Heures</span> à{" "}
-          <span className="text-[#F46036]">3 Minutes</span>
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight px-2">
+          De <span className="text-[#C1292E] dark:text-[#F46036]">3 Heures</span> à{" "}
+          <span className="text-[#F46036] dark:text-[#C1292E]">3 Minutes</span>
         </h1>
         
-        <p className="text-base sm:text-xl md:text-2xl text-slate-700 mb-8 leading-relaxed max-w-3xl mx-auto px-4">
+        <p className="text-base sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 mb-8 leading-relaxed max-w-3xl mx-auto px-4">
           Générez des fiches produits WooCommerce optimisées pour le SEO avec{" "}
-          <span className="font-semibold text-[#C1292E]">83% de score Rank Math garanti</span>{" "}
+          <span className="font-semibold text-[#C1292E] dark:text-[#F46036]">83% de score Rank Math garanti</span>{" "}
           pour vos parfums, cosmétiques et soins.
         </p>
         
