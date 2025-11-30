@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { listProducts, type Product } from '@/lib/firebase/products';
@@ -23,7 +23,20 @@ import {
   Clock,
   BarChart3
 } from 'lucide-react';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import dynamic from 'next/dynamic';
+
+// Lazy load Recharts pour optimiser bundle size
+const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
+const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false });
+const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), { ssr: false });
+const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false });
+const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
+const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
+const Legend = dynamic(() => import('recharts').then(mod => mod.Legend), { ssr: false });
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -61,8 +74,8 @@ export default function DashboardPage() {
     loadProducts();
   }, [user]);
 
-  // Statistiques calculées
-  const stats = {
+  // Statistiques calculées avec useMemo pour éviter recalculs
+  const stats = useMemo(() => ({
     totalProducts: products.length,
     creditsRemaining: userProfile?.creditBalance ?? 0,
     currentPlan: userProfile?.subscriptionPlan || 'free',
@@ -70,34 +83,40 @@ export default function DashboardPage() {
     averageScore: products.length > 0
       ? Math.round(products.reduce((acc, p) => acc + (p.confidenceScore || 0), 0) / products.length)
       : 0
-  };
+  }), [products, userProfile]);
 
-  // Données pour graphiques
-  const categoryData = products.reduce((acc, product) => {
-    const cat = product.category || 'Non catégorisé';
-    acc[cat] = (acc[cat] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // Données pour graphiques avec useMemo
+  const categoryData = useMemo(() => {
+    const data = products.reduce((acc, product) => {
+      const cat = product.category || 'Non catégorisé';
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-  const categoryChartData = Object.entries(categoryData)
-    .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 5);
+    return Object.entries(data)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+  }, [products]);
 
-  // Données activité (7 derniers jours simulés)
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (6 - i));
-    const dayProducts = products.filter(p => {
-      const pDate = new Date(p.generationDate);
-      return pDate.toDateString() === date.toDateString();
+  const categoryChartData = categoryData;
+
+  // Données activité (7 derniers jours) avec useMemo
+  const last7Days = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - i));
+      const dayProducts = products.filter(p => {
+        const pDate = new Date(p.generationDate);
+        return pDate.toDateString() === date.toDateString();
+      });
+      return {
+        date: date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
+        générations: dayProducts.length,
+        exports: dayProducts.filter(p => p.tags?.includes('exported')).length,
+      };
     });
-    return {
-      date: date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
-      générations: dayProducts.length,
-      exports: dayProducts.filter(p => p.tags?.includes('exported')).length,
-    };
-  });
+  }, [products]);
 
   const COLORS = ['#C1292E', '#F46036', '#9C27B0', '#2196F3', '#4CAF50'];
 
