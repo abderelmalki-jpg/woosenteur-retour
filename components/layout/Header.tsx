@@ -16,6 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -38,12 +39,12 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 dark:bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-slate-950/80 dark:border-slate-800">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Sparkles className="h-6 w-6 text-[#6B46C1] group-hover:rotate-12 transition-transform" />
+            <Sparkles className="h-6 w-6 text-[#6B46C1] dark:text-[#9333EA] group-hover:rotate-12 transition-transform" />
             <span className="font-heading text-2xl font-bold bg-gradient-to-r from-[#6B46C1] to-[#9333EA] bg-clip-text text-transparent">
               WooSenteur
             </span>
@@ -55,13 +56,13 @@ export default function Header() {
               <>
                 <Link 
                   href="/generate" 
-                  className="font-body text-sm font-medium text-gray-700 hover:text-[#6B46C1] transition-colors"
+                  className="font-body text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#6B46C1] dark:hover:text-[#9333EA] transition-colors"
                 >
                   Générer
                 </Link>
                 <Link 
                   href="/dashboard" 
-                  className="font-body text-sm font-medium text-gray-700 hover:text-[#6B46C1] transition-colors"
+                  className="font-body text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#6B46C1] dark:hover:text-[#9333EA] transition-colors"
                 >
                   Mes Produits
                 </Link>
@@ -70,18 +71,21 @@ export default function Header() {
                 {userProfile && (
                   userProfile.isUnlimited || userProfile.role === 'superadmin' ? (
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-full border border-amber-500/30">
-                      <Shield className="h-4 w-4 text-amber-600" />
-                      <span className="text-sm font-bold text-amber-700">ADMIN</span>
-                      <span className="text-xs text-amber-600">∞ crédits</span>
+                      <Shield className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      <span className="text-sm font-bold text-amber-700 dark:text-amber-400">ADMIN</span>
+                      <span className="text-xs text-amber-600 dark:text-amber-400">∞ crédits</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-[#9333EA]/10 to-[#6B46C1]/10 rounded-full">
                       <CreditCard className="h-4 w-4 text-[#9333EA]" />
                       <span className="text-sm font-semibold text-[#9333EA]">{userProfile.creditBalance}</span>
-                      <span className="text-xs text-gray-600">crédits</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">crédits</span>
                     </div>
                   )
                 )}
+
+                {/* Theme Toggle */}
+                <ThemeToggle />
 
                 {/* Menu utilisateur */}
                 <DropdownMenu>
