@@ -121,22 +121,23 @@ export default function BeforeAfterSection() {
           <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-8 shadow-xl">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                Preuve Rank Math
+                Preuve Rank Math : Avant/Après
               </h3>
               <p className="text-slate-600 dark:text-slate-300">
-                Score SEO réel obtenu avec WooSenteur
+                Comparaison réelle de scores SEO avec WooSenteur
               </p>
             </div>
-            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-700">
+            <div className="relative rounded-xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-700">
               <Image
-                src="/rank-math-score.png"
-                alt="Score Rank Math 83% obtenu avec WooSenteur"
-                fill
-                className="object-contain"
+                src="/rank-math-before-after.png"
+                alt="Comparaison Rank Math: Avant (30%) vs Après (83%) avec WooSenteur"
+                width={1920}
+                height={1080}
+                className="w-full h-auto"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               />
             </div>
-            <div className="mt-6 flex items-center justify-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-sm font-semibold text-green-700 dark:text-green-300">
@@ -146,6 +147,11 @@ export default function BeforeAfterSection() {
               <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                 <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
                   Rank Math certifié
+                </span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">
+                  +53% d'amélioration
                 </span>
               </div>
             </div>

@@ -19,6 +19,7 @@ const ReCaptchaComponent = forwardRef<ReCaptchaRef, ReCaptchaProps>(
   ({ onVerify, theme = 'light', size = 'normal' }, ref) => {
     const recaptchaRef = useRef<ReCAPTCHA>(null);
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    const isDevelopment = process.env.NODE_ENV === 'development';
 
     useImperativeHandle(ref, () => ({
       reset: () => {
@@ -34,6 +35,10 @@ const ReCaptchaComponent = forwardRef<ReCaptchaRef, ReCaptchaProps>(
 
     if (!siteKey) {
       console.warn('⚠️ NEXT_PUBLIC_RECAPTCHA_SITE_KEY not configured');
+      // En développement, simuler une validation réussie
+      if (isDevelopment && onVerify) {
+        setTimeout(() => onVerify('dev-token-bypass'), 100);
+      }
       return null;
     }
 
