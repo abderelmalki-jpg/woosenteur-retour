@@ -1,27 +1,25 @@
-import { genkit } from 'genkit';
-import { googleAI, gemini20FlashExp } from '@genkit-ai/googleai';
+/**
+ * Configuration Gemini AI pour WooSenteur
+ * Utilise directement l'API Google Generative AI
+ */
 
-// Initialize Genkit with Google AI
-export const ai = genkit({
-  plugins: [googleAI()],
-  model: gemini20FlashExp, // Changé vers Gemini 2.0 Flash Experimental
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Initialiser Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+
+// Modèle Gemini 2.0 Flash
+export const geminiModel = genAI.getGenerativeModel({ 
+  model: 'gemini-2.0-flash-exp',
 });
 
-// Types for product generation
-export interface ProductInput {
-  productName: string;
-  brand: string;
-  category: 'Parfums' | 'Cosmétiques' | 'Soins' | "Parfums d'intérieur" | 'Parfums beauté';
-}
+// Configuration par défaut
+export const DEFAULT_GENERATION_CONFIG = {
+  temperature: 0.7,
+  topK: 40,
+  topP: 0.95,
+  maxOutputTokens: 2048,
+};
 
-export interface ProductOutput {
-  seoTitle: string;
-  shortDescription: string;
-  longDescription: string;
-  mainKeyword: string;
-  suggestedCategory: string;
-  confidenceScore: number;
-  correctedBrand?: string;
-  correctedProductName?: string;
-  message?: string; // Message pour l'utilisateur selon le score de confiance
-}
+// Types
+export type { ProductInput, ProductOutput } from './types/product';

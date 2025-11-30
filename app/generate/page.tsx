@@ -122,16 +122,20 @@ function GeneratePageContent() {
       // Appel API
       const response = await fetch('/api/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ productName, brand, category }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la génération');
+        throw new Error(errorData.message || errorData.error || 'Erreur lors de la génération');
       }
 
-      const result: GenerationResult = await response.json();
+      const apiResponse = await response.json();
+      const result: GenerationResult = apiResponse.data;
+      
       setGenerationResult(result);
 
       // Remplir automatiquement les champs éditables
@@ -297,16 +301,72 @@ function GeneratePageContent() {
       return;
     }
 
+    if (!savedProductId) {
+      alert('Veuillez d\'abord sauvegarder le produit');
+      return;
+    }
+
     setIsExporting(true);
     
     try {
-      // TODO: Implémenter l'export WooCommerce REST API v3
-      console.log('🛒 Export WooCommerce vers', wooStoreUrl);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulation
-      alert('✅ Export WooCommerce réussi !');
-    } catch (error) {
+      // Tester la connexion d'abord
+      const testResponse = await fetch('/api/export/woocommerce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            url: wooStoreUrl,
+            consumerKey: wooConsumerKey,
+            consumerSecret: wooConsumerSecret,
+          },
+          testOnly: true,
+        }),
+      });
+
+      const testResult = await testResponse.json();
+      
+      if (!testResult.success) {
+        throw new Error(testResult.message);
+      }
+
+      // Exporter le produit
+      const productData = {
+        name: productName,
+        price: parseFloat(price) || 0,
+        category,
+        shortDescription,
+        longDescription,
+        seoTitle,
+        mainKeyword,
+        tags,
+        weight: parseFloat(weight) || 0,
+        imageUrl: mainImagePreview,
+        confidenceScore: generationResult?.confidenceScore,
+      };
+
+      const exportResponse = await fetch('/api/export/woocommerce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            url: wooStoreUrl,
+            consumerKey: wooConsumerKey,
+            consumerSecret: wooConsumerSecret,
+          },
+          products: [productData],
+        }),
+      });
+
+      const exportResult = await exportResponse.json();
+      
+      if (exportResult.success) {
+        alert(`✅ ${exportResult.message}`);
+      } else {
+        throw new Error(exportResult.message || 'Erreur lors de l\'export');
+      }
+    } catch (error: any) {
       console.error('❌ Erreur export WooCommerce :', error);
-      alert('❌ Erreur lors de l\'export');
+      alert(`❌ Erreur: ${error.message}`);
     } finally {
       setIsExporting(false);
     }
