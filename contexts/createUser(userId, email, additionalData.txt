@@ -1,0 +1,14 @@
+createUser(userId, email, additionalData)      // Création compte
+getUser(userId)                                 // Récupération profil
+updateUser(userId, updates)                     // Mise à jour
+decrementCredits(userId)                        // -1 crédit
+incrementExports(userId)                        // +1 export
+updateSubscription(userId, subscriptionData)    // Stripe sync
+saveWooCommerceCredentials(userId, credentials)
+updateLastLogin(userId)
+completeOnboarding(userId)
+updatePreferences(userId, preferences)
+
+🔍 Vérification d'existence sur sources fiables...
+✅ Produit trouvé : OUI (Score: XX%)
+[IA retourne JSON avec internalLog]
