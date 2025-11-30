@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import HeroLogo from "@/components/branding/HeroLogo";
+import HeroVideo from "@/components/landing/HeroVideo";
+import BeforeAfterSection from "@/components/landing/BeforeAfterSection";
 
 export default function Home() {
   return (
@@ -72,7 +74,15 @@ export default function Home() {
             <p className="text-sm text-slate-600">Validation IA</p>
           </div>
         </div>
+
+        {/* Vidéo Hero */}
+        <div className="mt-16">
+          <HeroVideo />
+        </div>
       </section>
+
+      {/* Section Avant/Après */}
+      <BeforeAfterSection />
 
       {/* Comment ça marche */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20">
