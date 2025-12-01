@@ -12,72 +12,89 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 dark:from-slate-950 dark:via-violet-950 dark:to-slate-950">
       
       {/* Hero Section */}
-      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center max-w-5xl">
-        {/* Logo Hero */}
-        <div className="flex justify-center mb-8">
-          <HeroLogo />
-        </div>
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 max-w-7xl">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Colonne gauche : Contenu texte centré */}
+          <div className="text-center lg:text-left space-y-8">
+            {/* Logo Hero */}
+            <div className="flex justify-center lg:justify-start">
+              <HeroLogo />
+            </div>
 
-        <div className="flex justify-center mb-6">
-          <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-sm py-1 px-4">
-            ✨ Propulsé par l'IA Gemini 2.0
-          </Badge>
-        </div>
-        
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight px-2">
-          De <span className="text-violet-600 dark:text-violet-400">3 Heures</span> à{" "}
-          <span className="text-purple-600 dark:text-purple-400">3 Minutes</span>
-        </h1>
-        
-        <p className="text-base sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 mb-8 leading-relaxed max-w-3xl mx-auto px-4">
-          Générez des fiches produits WooCommerce optimisées pour le SEO avec{" "}
-          <span className="font-semibold text-violet-600 dark:text-violet-400">83% de score Rank Math garanti</span>{" "}
-          pour vos parfums, cosmétiques et soins.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 px-4">
-          <Button 
-            asChild
-            size="lg"
-            className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto shadow-lg shadow-violet-500/50"
-          >
-            <Link href="/register" className="flex items-center justify-center">
-              <Sparkles className="mr-2 h-5 w-5" />
-              Commencer gratuitement
-            </Link>
-          </Button>
-          <Button 
-            asChild
-            size="lg"
-            variant="outline"
-            className="border-2 border-violet-600 text-violet-600 hover:bg-gradient-to-r hover:from-violet-600 hover:to-purple-600 hover:text-white text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
-          >
-            <Link href="/pricing" className="flex items-center justify-center">
-              Voir les tarifs
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
+            <div className="flex justify-center lg:justify-start">
+              <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-sm py-1.5 px-4">
+                ✨ Propulsé par l'IA Gemini 2.0
+              </Badge>
+            </div>
+            
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
+              De <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">3 Heures</span> à{" "}
+              <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">3 Minutes</span>
+            </h1>
+            
+            <p className="text-lg sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 leading-relaxed">
+              Générez des fiches produits WooCommerce optimisées pour le SEO avec{" "}
+              <span className="font-semibold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">83% de score Rank Math garanti</span>{" "}
+              pour vos parfums, cosmétiques et soins.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Button 
+                asChild
+                size="lg"
+                className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-700 hover:via-purple-700 hover:to-indigo-700 text-white text-lg px-8 py-6 shadow-xl shadow-violet-500/50 hover:shadow-2xl hover:shadow-violet-600/60 transition-all duration-300"
+              >
+                <Link href="/register" className="flex items-center justify-center">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Commencer gratuitement
+                </Link>
+              </Button>
+              <Button 
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-2 border-violet-600 text-violet-600 hover:bg-gradient-to-r hover:from-violet-600 hover:via-purple-600 hover:to-indigo-600 hover:text-white hover:border-transparent text-lg px-8 py-6 transition-all duration-300"
+              >
+                <Link href="/pricing" className="flex items-center justify-center">
+                  Voir les tarifs
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
 
-        {/* Stats rapides */}
-        <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto px-4">
-          <div className="space-y-2">
-            <p className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">83%</p>
-            <p className="text-sm text-slate-600">Score SEO moyen</p>
+            {/* Stats rapides */}
+            <div className="grid grid-cols-3 gap-6 pt-4">
+              <div className="text-center space-y-2">
+                <p className="text-5xl font-bold bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">83%</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Score SEO moyen</p>
+              </div>
+              <div className="text-center space-y-2">
+                <p className="text-5xl font-bold bg-gradient-to-br from-purple-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">3 min</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Temps de génération</p>
+              </div>
+              <div className="text-center space-y-2">
+                <p className="text-5xl font-bold bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">7</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Étapes validation IA</p>
+              </div>
+            </div>
           </div>
-          <div className="space-y-2">
-            <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">3 min</p>
-            <p className="text-sm text-slate-600">Temps de génération</p>
-          </div>
-          <div className="space-y-2">
-            <p className="text-4xl font-bold text-violet-600">7 étapes</p>
-            <p className="text-sm text-slate-600">Validation IA</p>
-          </div>
-        </div>
 
-        {/* Vidéo Hero */}
-        <div className="mt-16">
-          <HeroVideo />
+          {/* Colonne droite : Vidéo en bas */}
+          <div className="flex items-end justify-center lg:justify-end">
+            <div className="relative w-full max-w-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 via-purple-600/20 to-indigo-600/20 rounded-3xl blur-3xl"></div>
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="relative rounded-2xl shadow-2xl w-full h-auto border-4 border-white/20 dark:border-slate-800/50"
+              >
+                <source src="https://res.cloudinary.com/dhjwimevi/video/upload/v1762182360/Vid%C3%A9o_sans_titre_R%C3%A9alis%C3%A9e_avec_Clipchamp_1_gs2ikx.mp4" type="video/mp4" />
+                Votre navigateur ne supporte pas la vidéo.
+              </video>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -85,12 +102,14 @@ export default function Home() {
       <BeforeAfterSection />
 
       {/* Comment ça marche */}
-      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20">
-        <div className="text-center mb-12 sm:mb-16 px-4">
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-serif mb-4">
-            Comment ça fonctionne ?
+      <section className="container mx-auto px-4 sm:px-6 py-20 sm:py-28">
+        <div className="text-center mb-16 sm:mb-20">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif mb-6">
+            <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Comment ça fonctionne ?
+            </span>
           </h2>
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
             Notre IA spécialisée en beauté génère des fiches produits professionnelles en 3 étapes simples
           </p>
         </div>
@@ -119,22 +138,24 @@ export default function Home() {
               color: "from-indigo-600 to-violet-600"
             }
           ].map((item, index) => (
-            <Card key={index} className="p-8 border-2 bg-white hover:shadow-xl transition-all relative overflow-hidden group">
-              <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${item.color}`} />
+            <Card key={index} className="p-8 border-2 bg-white dark:bg-slate-900 hover:shadow-2xl hover:border-violet-400 transition-all duration-300 relative overflow-hidden group text-center">
+              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.color}`} />
               
-              <div className="mb-6">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-4`}>
-                  <item.icon className="w-8 h-8 text-white" />
+              <div className="mb-6 flex flex-col items-center">
+                <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 shadow-lg shadow-violet-500/50 group-hover:scale-110 transition-transform duration-300`}>
+                  <item.icon className="w-10 h-10 text-white" />
                 </div>
-                <Badge className="bg-slate-100 text-slate-700 text-lg font-bold">
+                <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-lg font-bold px-4 py-1.5">
                   Étape {item.step}
                 </Badge>
               </div>
               
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                {item.title}
+              <h3 className="text-2xl font-bold font-serif mb-4">
+                <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                  {item.title}
+                </span>
               </h3>
-              <p className="text-slate-600">
+              <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
                 {item.description}
               </p>
             </Card>
@@ -143,15 +164,18 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section className="container mx-auto px-4 py-20 bg-white/50">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-slate-900 font-serif mb-4">
-            Pourquoi choisir WooSenteur ?
-          </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Une IA hyper-spécialisée en produits beauté pour des fiches produits qui convertissent
-          </p>
-        </div>
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-violet-50/50 via-purple-50/50 to-indigo-50/50 dark:from-slate-900 dark:via-violet-950/30 dark:to-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif mb-6">
+              <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                Pourquoi choisir WooSenteur ?
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+              Une IA hyper-spécialisée en produits beauté pour des fiches produits qui convertissent
+            </p>
+          </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {[
@@ -159,70 +183,70 @@ export default function Home() {
               icon: TrendingUp,
               title: "Score SEO garanti",
               description: "83% de score Rank Math en moyenne. Nos fiches sont optimisées pour Google et génèrent du trafic organique.",
-              color: "text-green-600",
-              bg: "bg-green-100"
+              gradient: "from-violet-600 to-purple-600"
             },
             {
               icon: Zap,
               title: "Génération ultra-rapide",
               description: "3 minutes contre 3 heures de recherche manuelle. Multipliez votre productivité par 60.",
-              color: "text-yellow-600",
-              bg: "bg-yellow-100"
+              gradient: "from-purple-600 to-indigo-600"
             },
             {
               icon: Shield,
               title: "Validation en 7 étapes",
               description: "Notre IA vérifie l'existence du produit, corrige les fautes et valide les images pour éviter les erreurs.",
-              color: "text-blue-600",
-              bg: "bg-blue-100"
+              gradient: "from-indigo-600 to-violet-600"
             },
             {
               icon: Target,
               title: "Spécialisé beauté",
               description: "Connaissance approfondie des parfums, cosmétiques et soins. Pyramides olfactives, ingrédients, bienfaits.",
-              color: "text-purple-600",
-              bg: "bg-purple-100"
+              gradient: "from-violet-500 to-purple-500"
             },
             {
               icon: CheckCircle2,
               title: "Export WooCommerce",
               description: "Intégration directe avec votre boutique WooCommerce ou export CSV pour d'autres plateformes.",
-              color: "text-pink-600",
-              bg: "bg-pink-100"
+              gradient: "from-purple-500 to-indigo-500"
             },
             {
               icon: Clock,
               title: "Gain de temps massif",
               description: "Réduisez votre temps de création de catalogue de 95%. Concentrez-vous sur la vente, pas la rédaction.",
-              color: "text-orange-600",
-              bg: "bg-orange-100"
+              gradient: "from-indigo-500 to-violet-500"
             }
           ].map((feature, index) => (
-            <Card key={index} className="p-6 border-2 bg-white hover:shadow-xl transition-all group">
-              <div className={`${feature.bg} w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                <feature.icon className={`w-7 h-7 ${feature.color}`} />
+            <Card key={index} className="p-8 border-2 bg-white dark:bg-slate-900 hover:shadow-2xl hover:border-violet-400 transition-all duration-300 group text-center">
+              <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 mx-auto shadow-lg shadow-violet-500/50 group-hover:scale-110 transition-transform duration-300`}>
+                <feature.icon className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                {feature.title}
+              <h3 className="text-2xl font-bold font-serif mb-4">
+                <span className={`bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}>
+                  {feature.title}
+                </span>
               </h3>
-              <p className="text-slate-600 leading-relaxed">
+              <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
                 {feature.description}
               </p>
             </Card>
           ))}
         </div>
+        </div>
       </section>
 
       {/* Testimonials */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-slate-900 font-serif mb-4">
-            Ce que disent nos clients
-          </h2>
-          <p className="text-lg text-slate-600">
-            Des e-commerçants beauté satisfaits qui ont transformé leur workflow
-          </p>
-        </div>
+      <section className="py-20 sm:py-28">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif mb-6">
+              <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                Ce que disent nos clients
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+              Des e-commerçants beauté satisfaits qui ont transformé leur workflow
+            </p>
+          </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {[
@@ -248,24 +272,24 @@ export default function Home() {
               rating: 5
             }
           ].map((testimonial, index) => (
-            <Card key={index} className="p-6 border-2 bg-white hover:shadow-xl transition-all">
-              <div className="flex items-center gap-1 mb-4">
+            <Card key={index} className="p-8 border-2 bg-white dark:bg-slate-900 hover:shadow-2xl hover:border-violet-400 transition-all duration-300 text-center">
+              <div className="flex items-center justify-center gap-1 mb-6">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
               
-              <p className="text-slate-700 mb-6 italic leading-relaxed">
-                "{testimonial.testimonial}"
+              <p className="text-base text-slate-700 dark:text-slate-300 mb-8 italic leading-relaxed">
+                « {testimonial.testimonial} »
               </p>
               
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-violet-500/50">
                   {testimonial.avatar}
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900">{testimonial.name}</p>
-                  <p className="text-sm text-slate-600">{testimonial.role}</p>
+                  <p className="font-bold text-lg text-slate-900 dark:text-white">{testimonial.name}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{testimonial.role}</p>
                 </div>
               </div>
             </Card>
@@ -274,15 +298,18 @@ export default function Home() {
       </section>
 
       {/* Pricing Preview */}
-      <section className="container mx-auto px-4 py-20 bg-white/50">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-slate-900 font-serif mb-4">
-            Des tarifs simples et transparents
-          </h2>
-          <p className="text-lg text-slate-600">
-            Choisissez le plan qui correspond à vos besoins
-          </p>
-        </div>
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-violet-50/50 via-purple-50/50 to-indigo-50/50 dark:from-slate-900 dark:via-violet-950/30 dark:to-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif mb-6">
+              <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                Des tarifs simples et transparents
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+              Choisissez le plan qui correspond à vos besoins
+            </p>
+          </div>
 
         <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
           {[

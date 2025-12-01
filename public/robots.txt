@@ -1,0 +1,21 @@
+# https://woosenteur.fr/robots.txt
+
+User-agent: *
+Allow: /
+
+# Pages importantes
+Allow: /pricing
+Allow: /register
+Allow: /login
+
+# Pages à ne pas indexer
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /products
+Disallow: /generate
+Disallow: /adapter
+Disallow: /api/
+Disallow: /tests
+
+# Sitemap
+Sitemap: https://woosenteur.fr/sitemap.xml

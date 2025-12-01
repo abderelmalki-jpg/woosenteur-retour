@@ -21,6 +21,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveProduct, uploadProductImage, uploadGalleryImages } from '@/lib/firebase/products';
 import { decrementCredits } from '@/lib/firebase/users';
+import { API_GENERATE_URL, getApiHeaders } from '@/lib/api/config';
 
 /**
  * Page de génération de fiches produits WooSenteur
@@ -125,12 +126,9 @@ function GeneratePageContent() {
       }
       
       const idToken = await user.getIdToken();
-      const response = await fetch('/api/generate', {
+      const response = await fetch(API_GENERATE_URL, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`,
-        },
+        headers: getApiHeaders(idToken),
         body: JSON.stringify({ productName, brand, category }),
       });
 

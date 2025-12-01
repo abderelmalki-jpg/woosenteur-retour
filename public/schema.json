@@ -1,0 +1,42 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "WooSenteur",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, Android",
+  "offers": {
+    "@type": "AggregateOffer",
+    "lowPrice": "0",
+    "highPrice": "99",
+    "priceCurrency": "EUR",
+    "offerCount": "4"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "127"
+  },
+  "description": "Générateur de fiches produits WooCommerce optimisées SEO pour produits de beauté (parfums, cosmétiques, soins) propulsé par IA Gemini. Score Rank Math 83% garanti en 3 minutes.",
+  "url": "https://woosenteur.fr",
+  "author": {
+    "@type": "Organization",
+    "name": "WooSenteur",
+    "url": "https://woosenteur.fr"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "WooSenteur",
+    "url": "https://woosenteur.fr",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://woosenteur.fr/logo.png"
+    }
+  },
+  "featureList": [
+    "Génération automatique de fiches produits beauté",
+    "Optimisation SEO avec score Rank Math 83%",
+    "Validation IA en 7 étapes",
+    "Export WooCommerce direct",
+    "Support parfums, cosmétiques, soins"
+  ]
+}
