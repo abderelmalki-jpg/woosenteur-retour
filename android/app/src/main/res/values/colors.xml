@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Couleurs thème WooSenteur - Violet dominant -->
+    <color name="colorPrimary">#7C3AED</color> <!-- Violet 600 -->
+    <color name="colorPrimaryDark">#5B21B6</color> <!-- Violet 800 -->
+    <color name="colorAccent">#A78BFA</color> <!-- Purple 400 -->
+    
+    <!-- Couleurs système -->
+    <color name="backgroundColor">#F8E7EB</color> <!-- Rose blush background -->
+    <color name="surfaceColor">#FFFFFF</color>
+    <color name="errorColor">#EF4444</color>
+    <color name="textPrimary">#1F2937</color>
+    <color name="textSecondary">#6B7280</color>
+    
+    <!-- Splash Screen -->
+    <color name="splashBackground">#7C3AED</color>
+</resources>
