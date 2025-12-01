@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next';
 
+export const dynamic = 'force-static';
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'WooSenteur - Générateur Fiches Produits Beauté IA',
@@ -15,13 +17,13 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/icon-192.png',
         sizes: '192x192',
         type: 'image/png',
-        purpose: 'any maskable',
+        purpose: 'any',
       },
       {
         src: '/icon-512.png',
         sizes: '512x512',
         type: 'image/png',
-        purpose: 'any maskable',
+        purpose: 'maskable',
       },
     ],
     categories: ['business', 'productivity'],

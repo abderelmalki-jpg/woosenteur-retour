@@ -9,7 +9,10 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { geminiModel } from '@/lib/genkit/config';
 import { createRateLimiter } from '@/lib/middleware/rateLimit';
 
-export const dynamic = 'force-dynamic';
+// Désactivé en mode Capacitor (export statique)
+if (process.env.CAPACITOR_BUILD !== 'true') {
+  exports.dynamic = 'force-dynamic';
+}
 
 // Rate limiter: 5 adaptations par minute
 const rateLimiter = createRateLimiter({

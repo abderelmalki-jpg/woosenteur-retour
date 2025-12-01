@@ -4,8 +4,14 @@
 Write-Host "🚀 Début du build Android WooSenteur" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
+# Étape 0: Désactiver les routes API (incompatibles avec export statique)
+Write-Host "`n🔒 Étape 0/5: Désactivation routes API..." -ForegroundColor Yellow
+.\scripts\toggle-api-routes.ps1 -Action disable
+Write-Host "✅ Routes API désactivées" -ForegroundColor Green
+
 # Étape 1: Build Next.js
-Write-Host "`n📦 Étape 1/4: Build Next.js (export statique)..." -ForegroundColor Yellow
+Write-Host "`n📦 Étape 1/5: Build Next.js (export statique)..." -ForegroundColor Yellow
+$env:CAPACITOR_BUILD = "true"
 npm run build
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ Erreur lors du build Next.js" -ForegroundColor Red
@@ -60,6 +66,12 @@ if (Test-Path $apkSource) {
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "✅ Build terminé avec succès!" -ForegroundColor Green
 Write-Host "📱 APK disponible: $apkDest" -ForegroundColor Cyan
+
+# Étape 5: Réactiver les routes API
+Write-Host "`n🔓 Étape 5/5: Réactivation routes API..." -ForegroundColor Yellow
+.\scripts\toggle-api-routes.ps1 -Action enable
+Write-Host "✅ Routes API réactivées" -ForegroundColor Green
+
 Write-Host "`n💡 Pour installer sur un appareil:" -ForegroundColor Yellow
 Write-Host "   1. Activer le mode développeur sur votre téléphone" -ForegroundColor White
 Write-Host "   2. Activer l'installation depuis des sources inconnues" -ForegroundColor White

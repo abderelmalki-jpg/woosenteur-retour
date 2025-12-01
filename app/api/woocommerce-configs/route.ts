@@ -6,7 +6,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, db } from '@/lib/firebase/admin';
 
-export const dynamic = 'force-dynamic';
+// Désactivé en mode Capacitor (export statique)
+if (process.env.CAPACITOR_BUILD !== 'true') {
+  exports.dynamic = 'force-dynamic';
+}
 
 interface WooCommerceConfigData {
   name: string;

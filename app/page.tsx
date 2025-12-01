@@ -295,6 +295,7 @@ export default function Home() {
             </Card>
           ))}
         </div>
+        </div>
       </section>
 
       {/* Pricing Preview */}
@@ -400,6 +401,7 @@ export default function Home() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
+        </div>
         </div>
       </section>
 

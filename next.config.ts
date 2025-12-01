@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
+// Mode export pour Capacitor (build Android uniquement)
+// Désactivé par défaut pour permettre les routes API en dev/web
+const isCapacitorBuild = process.env.CAPACITOR_BUILD === 'true';
+
 const nextConfig: NextConfig = {
-  output: 'export',
+  ...(isCapacitorBuild && { output: 'export' }),
   images: {
     unoptimized: true,
   },
