@@ -16,9 +16,9 @@ const auth = admin.auth();
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-// CORS configuration
+// CORS configuration - Allow all origins for now (à restreindre en production)
 const corsOptions = {
-  cors: ['https://woosenteur.fr', 'https://studio-667958240-ed1db.web.app', 'capacitor://woosenteur.fr'],
+  cors: true, // Autorise toutes les origines (Capacitor Android/iOS + Web)
 };
 
 /**

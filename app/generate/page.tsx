@@ -126,6 +126,12 @@ function GeneratePageContent() {
       }
       
       const idToken = await user.getIdToken();
+      
+      // Debug: Log l'URL utilisée
+      console.log('[DEBUG] API_GENERATE_URL:', API_GENERATE_URL);
+      console.log('[DEBUG] User UID:', user.uid);
+      console.log('[DEBUG] Token présent:', !!idToken);
+      
       const response = await fetch(API_GENERATE_URL, {
         method: 'POST',
         headers: getApiHeaders(idToken),
@@ -133,8 +139,22 @@ function GeneratePageContent() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || errorData.error || 'Erreur lors de la génération');
+        console.error('[DEBUG] Response status:', response.status);
+        console.error('[DEBUG] Response statusText:', response.statusText);
+        
+        let errorMessage = 'Erreur lors de la génération';
+        try {
+          const errorData = await response.json();
+          console.error('[DEBUG] Error data:', errorData);
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          console.error('[DEBUG] Could not parse error JSON:', e);
+          const textError = await response.text();
+          console.error('[DEBUG] Error text:', textError);
+          errorMessage = textError || errorMessage;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const apiResponse = await response.json();
