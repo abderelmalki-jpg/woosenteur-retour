@@ -8,7 +8,7 @@ param(
 )
 
 $apiPath = "app\api"
-$apiDisabledPath = "app\api-disabled-for-capacitor"
+$apiDisabledPath = "api-backup-temp"  # Déplacé hors de app/
 
 if ($Action -eq "disable") {
     if (Test-Path $apiPath) {
@@ -19,7 +19,7 @@ if ($Action -eq "disable") {
         Start-Sleep -Seconds 1
         
         Move-Item -Path $apiPath -Destination $apiDisabledPath -Force
-        Write-Host "✅ Routes API désactivées (renommé en api-disabled-for-capacitor)" -ForegroundColor Green
+        Write-Host "✅ Routes API désactivées (déplacé vers $apiDisabledPath)" -ForegroundColor Green
     } else {
         Write-Host "ℹ️ Routes API déjà désactivées" -ForegroundColor Cyan
     }

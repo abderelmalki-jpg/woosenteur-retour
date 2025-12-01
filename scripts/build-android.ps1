@@ -7,7 +7,18 @@ Write-Host "========================================" -ForegroundColor Cyan
 # Étape 0: Désactiver les routes API (incompatibles avec export statique)
 Write-Host "`n🔒 Étape 0/5: Désactivation routes API..." -ForegroundColor Yellow
 .\scripts\toggle-api-routes.ps1 -Action disable
-Write-Host "✅ Routes API désactivées" -ForegroundColor Green
+
+# Nettoyer le cache Next.js
+Write-Host "🧹 Nettoyage du cache Next.js..." -ForegroundColor Yellow
+if (Test-Path ".next") {
+    Remove-Item -Path ".next" -Recurse -Force
+    Write-Host "✅ Cache .next supprimé" -ForegroundColor Green
+}
+if (Test-Path "out") {
+    Remove-Item -Path "out" -Recurse -Force
+    Write-Host "✅ Dossier out supprimé" -ForegroundColor Green
+}
+Write-Host "✅ Routes API désactivées et cache nettoyé" -ForegroundColor Green
 
 # Étape 1: Build Next.js
 Write-Host "`n📦 Étape 1/5: Build Next.js (export statique)..." -ForegroundColor Yellow

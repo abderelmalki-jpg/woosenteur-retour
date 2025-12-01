@@ -11,24 +11,26 @@ const nextConfig: NextConfig = {
   },
   turbopack: {},
   trailingSlash: true,
-  // SEO Configuration
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
-          },
-        ],
-      },
-    ];
-  },
+  // Headers SEO uniquement pour build web (incompatible avec export)
+  ...(!isCapacitorBuild && {
+    async headers() {
+      return [
+        {
+          source: '/:path*',
+          headers: [
+            {
+              key: 'X-DNS-Prefetch-Control',
+              value: 'on'
+            },
+            {
+              key: 'X-Frame-Options',
+              value: 'SAMEORIGIN'
+            },
+          ],
+        },
+      ];
+    },
+  }),
 };
 
 export default nextConfig;
