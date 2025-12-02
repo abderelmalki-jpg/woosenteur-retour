@@ -113,7 +113,7 @@ exports.generateProduct = functions.https.onRequest({
             return;
         }
         const userData = userDoc.data();
-        const creditsRemaining = userData?.generationCredits || 0;
+        const creditsRemaining = userData?.creditBalance || userData?.generationCredits || 0;
         if (creditsRemaining <= 0) {
             res.status(403).json({
                 error: 'Crédits insuffisants',
@@ -187,7 +187,8 @@ Réponds UNIQUEMENT avec un objet JSON contenant:
         const validatedResult = resultSchema.parse(aiResult);
         // 5. Décrémenter crédits
         await userRef.update({
-            generationCredits: admin.firestore.FieldValue.increment(-1),
+            creditBalance: admin.firestore.FieldValue.increment(-1),
+            totalGenerations: admin.firestore.FieldValue.increment(1),
         });
         console.log('[generateProduct] Success for user:', userId);
         // 6. Retourner le résultat

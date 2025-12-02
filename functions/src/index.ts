@@ -94,7 +94,7 @@ export const generateProduct = functions.https.onRequest(
     }
 
     const userData = userDoc.data();
-    const creditsRemaining = userData?.generationCredits || 0;
+    const creditsRemaining = userData?.creditBalance || userData?.generationCredits || 0;
 
     if (creditsRemaining <= 0) {
       res.status(403).json({ 
@@ -180,7 +180,8 @@ Réponds UNIQUEMENT avec un objet JSON contenant:
 
     // 5. Décrémenter crédits
     await userRef.update({
-      generationCredits: admin.firestore.FieldValue.increment(-1),
+      creditBalance: admin.firestore.FieldValue.increment(-1),
+      totalGenerations: admin.firestore.FieldValue.increment(1),
     });
 
     console.log('[generateProduct] Success for user:', userId);

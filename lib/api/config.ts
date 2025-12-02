@@ -4,7 +4,7 @@
  */
 
 // URLs Cloud Functions Firebase
-const FIREBASE_FUNCTIONS_URL = 'https://generateproduct-g4xkdkoqiq-uc.a.run.app';
+const FIREBASE_FUNCTIONS_URL = 'https://us-central1-woosenteur-app.cloudfunctions.net/generateProduct';
 
 /**
  * URL de l'API de génération

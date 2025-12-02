@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Autoriser le trafic cleartext pour le développement -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    
+    <!-- Domaines spécifiques pour l'API Cloud Functions -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">generateproduct-g4xkdkoqiq-uc.a.run.app</domain>
+        <domain includeSubdomains="true">firebasestorage.googleapis.com</domain>
+        <domain includeSubdomains="true">firebase.googleapis.com</domain>
+        <domain includeSubdomains="true">cloudinary.com</domain>
+    </domain-config>
+</network-security-config>

@@ -15,15 +15,15 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock, Chrome } from 'lucide-react';
 import Link from 'next/link';
 import AdminLoginButton from './AdminLoginButton';
-import ReCaptcha, { type ReCaptchaRef } from '@/components/ReCaptcha';
+// import ReCaptcha, { type ReCaptchaRef } from '@/components/ReCaptcha';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<ReCaptchaRef>(null);
+  // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  // const recaptchaRef = useRef<ReCaptchaRef>(null);
   const { login, loginWithGoogle } = useAuth();
   const router = useRouter();
 
@@ -31,10 +31,10 @@ export default function LoginForm() {
     e.preventDefault();
     setError('');
 
-    if (!recaptchaToken) {
-      setError('Veuillez valider le reCAPTCHA');
-      return;
-    }
+    // if (!recaptchaToken) {
+    //   setError('Veuillez valider le reCAPTCHA');
+    //   return;
+    // }
 
     setLoading(true);
 
@@ -43,8 +43,8 @@ export default function LoginForm() {
       router.push('/generate'); // Redirection vers génération
     } catch (err: any) {
       setError(err.message);
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
+      // recaptchaRef.current?.reset();
+      // setRecaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -53,10 +53,10 @@ export default function LoginForm() {
   async function handleGoogleLogin() {
     setError('');
 
-    if (!recaptchaToken) {
-      setError('Veuillez valider le reCAPTCHA');
-      return;
-    }
+    // if (!recaptchaToken) {
+    //   setError('Veuillez valider le reCAPTCHA');
+    //   return;
+    // }
 
     setLoading(true);
 
@@ -65,19 +65,19 @@ export default function LoginForm() {
       router.push('/generate');
     } catch (err: any) {
       setError(err.message);
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
+      // recaptchaRef.current?.reset();
+      // setRecaptchaToken(null);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleRecaptchaChange(token: string | null) {
-    setRecaptchaToken(token);
-    if (token) {
-      setError('');
-    }
-  }
+  // function handleRecaptchaChange(token: string | null) {
+  //   setRecaptchaToken(token);
+  //   if (token) {
+  //     setError('');
+  //   }
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F8E7EB] via-white to-[#F8E7EB] p-4">
@@ -136,15 +136,15 @@ export default function LoginForm() {
               />
             </div>
 
-            <ReCaptcha
+            {/* <ReCaptcha
               ref={recaptchaRef}
               onVerify={handleRecaptchaChange}
               theme="light"
-            />
+            /> */}
 
             <Button
               type="submit"
-              disabled={loading || !recaptchaToken}
+              disabled={loading}
               className="w-full h-11 bg-gradient-to-r from-[#9333EA] to-[#6B46C1] hover:opacity-90 transition-opacity"
             >
               {loading ? (

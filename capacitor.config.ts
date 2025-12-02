@@ -5,8 +5,8 @@ const config: CapacitorConfig = {
   appName: 'WooSenteur',
   webDir: 'out',
   server: {
-    androidScheme: 'https',
-    hostname: 'woosenteur.fr'
+    // Utiliser le schéma Capacitor par défaut pour éviter les problèmes CORS
+    cleartext: true, // Autorise HTTP pour les APIs externes en dev
   },
   plugins: {
     SplashScreen: {

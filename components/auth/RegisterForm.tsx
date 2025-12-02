@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Formulaire d'inscription - Email/Password + Google OAuth + reCAPTCHA
+ * Formulaire d'inscription - Email/Password + Google OAuth
  */
 
 import { useState, useRef } from 'react';
@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock, User, Chrome, Check } from 'lucide-react';
 import Link from 'next/link';
-import ReCaptcha, { type ReCaptchaRef } from '@/components/ReCaptcha';
+// import ReCaptcha, { type ReCaptchaRef } from '@/components/ReCaptcha';
 
 export default function RegisterForm() {
   const [displayName, setDisplayName] = useState('');
@@ -23,8 +23,8 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<ReCaptchaRef>(null);
+  // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  // const recaptchaRef = useRef<ReCaptchaRef>(null);
   const { register, loginWithGoogle } = useAuth();
   const router = useRouter();
 
@@ -32,23 +32,23 @@ export default function RegisterForm() {
     e.preventDefault();
     setError('');
 
-    if (!recaptchaToken) {
-      setError('Veuillez valider le reCAPTCHA');
-      return;
-    }
+    // if (!recaptchaToken) {
+    //   setError('Veuillez valider le reCAPTCHA');
+    //   return;
+    // }
 
     // Validation mot de passe
     if (password.length < 6) {
       setError('Le mot de passe doit contenir au moins 6 caractères');
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
+      // recaptchaRef.current?.reset();
+      // setRecaptchaToken(null);
       return;
     }
 
     if (password !== confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
+      // recaptchaRef.current?.reset();
+      // setRecaptchaToken(null);
       return;
     }
 
@@ -59,8 +59,8 @@ export default function RegisterForm() {
       router.push('/generate'); // Redirection après inscription
     } catch (err: any) {
       setError(err.message);
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
+      // recaptchaRef.current?.reset();
+      // setRecaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -69,10 +69,10 @@ export default function RegisterForm() {
   async function handleGoogleRegister() {
     setError('');
 
-    if (!recaptchaToken) {
-      setError('Veuillez valider le reCAPTCHA');
-      return;
-    }
+    // if (!recaptchaToken) {
+    //   setError('Veuillez valider le reCAPTCHA');
+    //   return;
+    // }
 
     setLoading(true);
 
@@ -81,19 +81,19 @@ export default function RegisterForm() {
       router.push('/generate');
     } catch (err: any) {
       setError(err.message);
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
+      // recaptchaRef.current?.reset();
+      // setRecaptchaToken(null);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleRecaptchaChange(token: string | null) {
-    setRecaptchaToken(token);
-    if (token) {
-      setError('');
-    }
-  }
+  // function handleRecaptchaChange(token: string | null) {
+  //   setRecaptchaToken(token);
+  //   if (token) {
+  //     setError('');
+  //   }
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F8E7EB] via-white to-[#F8E7EB] p-4">
@@ -202,15 +202,15 @@ export default function RegisterForm() {
               />
             </div>
 
-            <ReCaptcha
+            {/* <ReCaptcha
               ref={recaptchaRef}
               onVerify={handleRecaptchaChange}
               theme="light"
-            />
+            /> */}
 
             <Button
               type="submit"
-              disabled={loading || !recaptchaToken}
+              disabled={loading}
               className="w-full h-11 bg-gradient-to-r from-[#9333EA] to-[#6B46C1] hover:opacity-90 transition-opacity"
             >
               {loading ? (

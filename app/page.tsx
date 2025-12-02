@@ -4,8 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import HeroLogo from "@/components/branding/HeroLogo";
-import HeroVideo from "@/components/landing/HeroVideo";
-import BeforeAfterSection from "@/components/landing/BeforeAfterSection";
 
 export default function Home() {
   return (
@@ -13,15 +11,14 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 max-w-7xl">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Colonne gauche : Contenu texte centré */}
-          <div className="text-center lg:text-left space-y-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center space-y-8">
             {/* Logo Hero */}
-            <div className="flex justify-center lg:justify-start">
+            <div className="flex justify-center">
               <HeroLogo />
             </div>
 
-            <div className="flex justify-center lg:justify-start">
+            <div className="flex justify-center">
               <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-sm py-1.5 px-4">
                 ✨ Propulsé par l'IA Gemini 2.0
               </Badge>
@@ -38,7 +35,7 @@ export default function Home() {
               pour vos parfums, cosmétiques et soins.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 asChild
                 size="lg"
@@ -63,7 +60,7 @@ export default function Home() {
             </div>
 
             {/* Stats rapides */}
-            <div className="grid grid-cols-3 gap-6 pt-4">
+            <div className="grid grid-cols-3 gap-6 pt-4 max-w-3xl mx-auto">
               <div className="text-center space-y-2">
                 <p className="text-5xl font-bold bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">83%</p>
                 <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Score SEO moyen</p>
@@ -78,28 +75,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* Colonne droite : Vidéo en bas */}
-          <div className="flex items-end justify-center lg:justify-end">
-            <div className="relative w-full max-w-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 via-purple-600/20 to-indigo-600/20 rounded-3xl blur-3xl"></div>
-              <video 
-                autoPlay 
-                loop 
-                muted 
-                playsInline
-                className="relative rounded-2xl shadow-2xl w-full h-auto border-4 border-white/20 dark:border-slate-800/50"
-              >
-                <source src="https://res.cloudinary.com/dhjwimevi/video/upload/v1762182360/Vid%C3%A9o_sans_titre_R%C3%A9alis%C3%A9e_avec_Clipchamp_1_gs2ikx.mp4" type="video/mp4" />
-                Votre navigateur ne supporte pas la vidéo.
-              </video>
-            </div>
-          </div>
         </div>
       </section>
-
-      {/* Section Avant/Après */}
-      <BeforeAfterSection />
 
       {/* Comment ça marche */}
       <section className="container mx-auto px-4 sm:px-6 py-20 sm:py-28">
@@ -325,7 +302,7 @@ export default function Home() {
             },
             {
               name: "Essentiel",
-              price: "19€",
+              price: "5,99€",
               period: "/mois",
               credits: "50 générations",
               features: ["Support email", "Export WooCommerce", "Historique illimité"],
@@ -334,10 +311,10 @@ export default function Home() {
             },
             {
               name: "Standard",
-              price: "49€",
+              price: "9,99€",
               period: "/mois",
               credits: "200 générations",
-              features: ["Support prioritaire", "API access", "Multi-boutiques"],
+              features: ["Support prioritaire", "Import CSV masse", "Multi-boutiques"],
               cta: "Choisir",
               highlighted: true
             },
@@ -346,7 +323,7 @@ export default function Home() {
               price: "99€",
               period: "/mois",
               credits: "1000 générations",
-              features: ["Support dédié", "Fonctions IA avancées", "Export en masse"],
+              features: ["Support dédié", "White-label", "API dédiée"],
               cta: "Upgrader",
               highlighted: false
             }
