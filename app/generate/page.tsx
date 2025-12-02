@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -75,15 +75,56 @@ function GeneratePageContent() {
   const [mainImagePreview, setMainImagePreview] = useState('');
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+  const [isValidatingImage, setIsValidatingImage] = useState(false);
+  const [imageValidationResult, setImageValidationResult] = useState<{
+    isValid: boolean;
+    confidence: number;
+    message: string;
+  } | null>(null);
 
   // ==================== ONGLET 4 : Export ====================
   const [wooStoreUrl, setWooStoreUrl] = useState('');
   const [wooConsumerKey, setWooConsumerKey] = useState('');
   const [wooConsumerSecret, setWooConsumerSecret] = useState('');
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoadingAdminConfig, setIsLoadingAdminConfig] = useState(false);
+  const [adminConfigLoaded, setAdminConfigLoaded] = useState(false);
 
   // ==================== HANDLERS ====================
   
+  /**
+   * Charger la configuration WooCommerce admin si superadmin
+   */
+  useEffect(() => {
+    if (activeTab === 'export' && user && userProfile?.role === 'superadmin' && !adminConfigLoaded && !isLoadingAdminConfig) {
+      const loadConfig = async () => {
+        setIsLoadingAdminConfig(true);
+        try {
+          const idToken = await user.getIdToken();
+          const response = await fetch('/api/admin/woocommerce-config', {
+            headers: { Authorization: `Bearer ${idToken}` },
+          });
+
+          const result = await response.json();
+          
+          if (result.success && result.config) {
+            setWooStoreUrl(result.config.url);
+            setWooConsumerKey(result.config.consumerKey);
+            setWooConsumerSecret(result.config.consumerSecret);
+            setAdminConfigLoaded(true);
+            console.log('✅ Configuration admin dubainegoce.fr chargée automatiquement');
+          }
+        } catch (error) {
+          console.error('❌ Erreur chargement config admin:', error);
+        } finally {
+          setIsLoadingAdminConfig(false);
+        }
+      };
+      
+      loadConfig();
+    }
+  }, [activeTab, user, userProfile, adminConfigLoaded, isLoadingAdminConfig]);
+
   /**
    * Génération IA avec pipeline en 7 étapes
    */
@@ -289,6 +330,60 @@ function GeneratePageContent() {
   };
 
   /**
+   * Validation IA de l'image principale (optionnel)
+   */
+  const handleValidateImage = async () => {
+    if (!mainImagePreview || !productName || !brand) {
+      alert('Veuillez uploader une image et remplir le nom du produit et la marque');
+      return;
+    }
+
+    setIsValidatingImage(true);
+    setImageValidationResult(null);
+
+    try {
+      if (!user) {
+        throw new Error('Utilisateur non connecté');
+      }
+
+      const idToken = await user.getIdToken();
+
+      const response = await fetch('/api/validate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          imageUrl: mainImagePreview,
+          productName,
+          brand,
+          category,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erreur lors de la validation');
+      }
+
+      const result = await response.json();
+      setImageValidationResult({
+        isValid: result.isValid,
+        confidence: result.confidence,
+        message: result.message,
+      });
+
+      console.log('✅ Validation image:', result);
+    } catch (error: any) {
+      console.error('❌ Erreur validation image:', error);
+      alert(`❌ Erreur: ${error.message}`);
+    } finally {
+      setIsValidatingImage(false);
+    }
+  };
+
+  /**
    * Export CSV
    */
   const handleExportCSV = () => {
@@ -325,10 +420,7 @@ function GeneratePageContent() {
       return;
     }
 
-    if (!savedProductId) {
-      alert('Veuillez d\'abord sauvegarder le produit');
-      return;
-    }
+    // ✅ Validation désactivée pour admin - permet export direct avec identifiants pré-configurés
 
     setIsExporting(true);
     
@@ -704,7 +796,11 @@ function GeneratePageContent() {
                     <div className="relative inline-block">
                       <img src={mainImagePreview} alt="Preview" className="max-h-64 rounded-lg" />
                       <Button 
-                        onClick={() => { setMainImage(null); setMainImagePreview(''); }} 
+                        onClick={() => { 
+                          setMainImage(null); 
+                          setMainImagePreview(''); 
+                          setImageValidationResult(null);
+                        }} 
                         variant="destructive" 
                         size="icon" 
                         className="absolute top-2 right-2"
@@ -721,6 +817,48 @@ function GeneratePageContent() {
                     </label>
                   )}
                 </div>
+                
+                {/* Bouton validation IA optionnel */}
+                {mainImagePreview && (
+                  <div className="space-y-3">
+                    <Button
+                      onClick={handleValidateImage}
+                      disabled={isValidatingImage}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      {isValidatingImage ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Validation IA en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Valider l'image par IA (optionnel)
+                        </>
+                      )}
+                    </Button>
+
+                    {/* Résultat validation */}
+                    {imageValidationResult && (
+                      <Alert className={imageValidationResult.isValid ? "bg-green-50 border-green-200" : "bg-orange-50 border-orange-200"}>
+                        {imageValidationResult.isValid ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-4 w-4 text-orange-600" />
+                        )}
+                        <AlertDescription className={imageValidationResult.isValid ? "text-green-800" : "text-orange-800"}>
+                          <strong>{imageValidationResult.isValid ? '✅ Image validée' : '⚠️ Image à vérifier'}</strong>
+                          <span className="block mt-1">{imageValidationResult.message}</span>
+                          <span className="block mt-1 text-xs">
+                            Confiance : <strong>{imageValidationResult.confidence}%</strong>
+                          </span>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                )}
               </div>
 
               <Separator />
@@ -810,6 +948,16 @@ function GeneratePageContent() {
 
         {/* ==================== ONGLET 4 : EXPORT ==================== */}
         <TabsContent value="export" className="space-y-6">
+          {/* Badge admin config chargée */}
+          {adminConfigLoaded && (
+            <Alert className="bg-purple-50 border-purple-200">
+              <CheckCircle2 className="h-4 w-4 text-purple-600" />
+              <AlertDescription className="text-purple-800">
+                <strong>Configuration admin chargée</strong> • Les identifiants dubainegoce.fr sont pré-remplis
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid gap-6 md:grid-cols-2">
             {/* Export CSV */}
             <Card>

@@ -212,10 +212,10 @@ Réponds UNIQUEMENT avec un objet JSON contenant:
                 top: zod_1.z.array(zod_1.z.string()),
                 heart: zod_1.z.array(zod_1.z.string()),
                 base: zod_1.z.array(zod_1.z.string()),
-            }).optional(),
-            activeIngredients: zod_1.z.array(zod_1.z.string()).optional(),
-            sources: zod_1.z.array(zod_1.z.string()).optional(),
-            message: zod_1.z.string().optional(),
+            }).nullable().optional().transform(val => val || undefined),
+            activeIngredients: zod_1.z.array(zod_1.z.string()).nullable().optional().transform(val => val || []),
+            sources: zod_1.z.array(zod_1.z.string()).nullable().optional().transform(val => val || []),
+            message: zod_1.z.string().nullable().optional(),
         });
         const validatedResult = resultSchema.parse(aiResult);
         // 5. Décrémenter crédits et incrémenter compteur

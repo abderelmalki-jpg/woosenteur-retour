@@ -204,10 +204,10 @@ Réponds UNIQUEMENT avec un objet JSON contenant:
         top: z.array(z.string()),
         heart: z.array(z.string()),
         base: z.array(z.string()),
-      }).optional(),
-      activeIngredients: z.array(z.string()).optional(),
-      sources: z.array(z.string()).optional(),
-      message: z.string().optional(),
+      }).nullable().optional().transform(val => val || undefined),
+      activeIngredients: z.array(z.string()).nullable().optional().transform(val => val || []),
+      sources: z.array(z.string()).nullable().optional().transform(val => val || []),
+      message: z.string().nullable().optional(),
     });
 
     const validatedResult = resultSchema.parse(aiResult);

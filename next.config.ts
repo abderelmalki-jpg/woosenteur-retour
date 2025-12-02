@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 // Mode export pour Capacitor (build Android uniquement)
-// Désactivé par défaut pour permettre les routes API en dev/web
+// Pour web: utiliser Firebase App Hosting (SSR)
 const isCapacitorBuild = process.env.CAPACITOR_BUILD === 'true';
 
 const nextConfig: NextConfig = {
   ...(isCapacitorBuild && { output: 'export' }),
   images: {
-    unoptimized: true,
+    unoptimized: isCapacitorBuild, // Optimisé sur App Hosting
   },
   turbopack: {},
   trailingSlash: true,
