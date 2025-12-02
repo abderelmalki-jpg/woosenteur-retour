@@ -113,6 +113,7 @@ exports.generateProduct = functions.https.onRequest({
             return;
         }
         const userData = userDoc.data();
+        // Support both old (generationCredits) and new (creditBalance) field names
         const creditsRemaining = userData?.creditBalance || userData?.generationCredits || 0;
         if (creditsRemaining <= 0) {
             res.status(403).json({
@@ -126,39 +127,64 @@ exports.generateProduct = functions.https.onRequest({
         const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
         const systemPrompt = `Tu es un expert en rédaction de fiches produits e-commerce pour produits de beauté (parfums, cosmétiques, soins).
 
+SOURCES DE DONNÉES PRIORITAIRES (dans cet ordre):
+1. Notino.fr (référence française #1 pour parfums/cosmétiques)
+2. FragranceX.com (base de données internationale)
+3. Sephora.fr (pour produits de maquillage/soins)
+4. Marionnaud.fr (parfumerie française)
+
 PIPELINE EN 7 ÉTAPES:
 1. Normaliser l'input (nettoyage, corrections orthographe)
-2. Vérifier existence produit (base de données interne)
-3. Fuzzy matching si typo détectée
-4. Calculer score de confiance (0-100)
-5. Appliquer guardrails (JAMAIS inventer marques/claims sans preuve)
-6. Cross-validation des attributs
-7. Générer sortie structurée
+2. Rechercher le produit sur Notino.fr et FragranceX.com (descriptions réelles)
+3. Fuzzy matching si typo détectée (Levenshtein distance < 3)
+4. Calculer score de confiance (0-100):
+   - 100: Produit trouvé sur 2+ sources avec correspondance exacte
+   - 85-99: Produit trouvé sur 1 source avec correspondance exacte
+   - 60-84: Produit trouvé avec variantes (taille, édition différente)
+   - <60: Produit non trouvé ou marque inconnue
+5. Appliquer guardrails:
+   - JAMAIS inventer notes olfactives sans source
+   - JAMAIS inventer prix sans référence vérifiable
+   - JAMAIS copier mot-à-mot (reformulation obligatoire)
+6. Cross-validation des attributs (pyramide olfactive, contenance, prix)
+7. Générer sortie structurée avec références
 
 RÈGLES STRICTES:
-- Score ≥85%: Auto-correct silencieux
-- Score 60-84%: Générer avec disclaimer
-- Score <60%: Demander clarification
-- Ton empathique (jamais humiliant)
-- Toujours retourner JSON valide`;
+- Score ≥85%: Auto-correct silencieux et génération
+- Score 60-84%: Générer avec disclaimer ("Il est probable que...")
+- Score <60%: Message d'erreur demandant clarification
+- Ton empathique (jamais humiliant si erreur utilisateur)
+- Toujours retourner JSON valide
+- Pour parfums: OBLIGATOIRE d'inclure pyramide olfactive (notes de tête/cœur/fond)
+- Pour cosmétiques: OBLIGATOIRE d'inclure actifs principaux et bienfaits`;
         const prompt = `Génère une fiche produit pour:
 - Nom: ${productName}
 - Marque: ${brand}
 - Catégorie: ${category}
 
+INSTRUCTIONS:
+1. Recherche d'abord ce produit sur Notino.fr et FragranceX.com
+2. Si trouvé, utilise les vraies descriptions pour créer une version unique (pas de copie)
+3. Si parfum: extrais pyramide olfactive (notes de tête, cœur, fond)
+4. Si cosmétique: extrais actifs principaux et bienfaits peau
+5. Calcule un score de confiance basé sur les sources trouvées
+
 Réponds UNIQUEMENT avec un objet JSON contenant:
 {
   "confidenceScore": number (0-100),
-  "seoTitle": string (50-60 caractères),
-  "shortDescription": string (120-160 caractères),
-  "longDescription": string (300-500 caractères),
-  "mainKeyword": string,
-  "price": number (estimation),
-  "weight": number (en grammes),
-  "suggestedCategory": string,
-  "usageTips": string (optionnel),
-  "brandInfo": string (optionnel),
-  "message": string (optionnel)
+  "seoTitle": string (50-60 caractères, inclure marque + nom produit),
+  "shortDescription": string (120-160 caractères, accroche marketing),
+  "longDescription": string (300-500 caractères, description complète avec pyramide olfactive ou actifs),
+  "mainKeyword": string (mot-clé SEO principal),
+  "price": number (prix estimé en EUR basé sur Notino.fr ou moyenne marché),
+  "weight": number (en grammes, contenance standard: 50ml parfum = 50g),
+  "suggestedCategory": string (Parfums Homme/Femme, Soins Visage, Maquillage, etc.),
+  "usageTips": string (conseils d'utilisation, moment de la journée),
+  "brandInfo": string (histoire de la marque, positionnement luxe/premium/accessible),
+  "olfactoryNotes": { "top": string[], "heart": string[], "base": string[] } (UNIQUEMENT pour parfums),
+  "activeIngredients": string[] (UNIQUEMENT pour cosmétiques/soins),
+  "sources": string[] (URLs ou noms des sources consultées),
+  "message": string (optionnel, si score < 60 ou avertissement utilisateur)
 }`;
         const result = await model.generateContent([systemPrompt, prompt]);
         const response = result.response;
@@ -182,10 +208,17 @@ Réponds UNIQUEMENT avec un objet JSON contenant:
             suggestedCategory: zod_1.z.string(),
             usageTips: zod_1.z.string().optional(),
             brandInfo: zod_1.z.string().optional(),
+            olfactoryNotes: zod_1.z.object({
+                top: zod_1.z.array(zod_1.z.string()),
+                heart: zod_1.z.array(zod_1.z.string()),
+                base: zod_1.z.array(zod_1.z.string()),
+            }).optional(),
+            activeIngredients: zod_1.z.array(zod_1.z.string()).optional(),
+            sources: zod_1.z.array(zod_1.z.string()).optional(),
             message: zod_1.z.string().optional(),
         });
         const validatedResult = resultSchema.parse(aiResult);
-        // 5. Décrémenter crédits
+        // 5. Décrémenter crédits et incrémenter compteur
         await userRef.update({
             creditBalance: admin.firestore.FieldValue.increment(-1),
             totalGenerations: admin.firestore.FieldValue.increment(1),
