@@ -61,23 +61,38 @@ export const PRODUCT_GENERATION_PROMPT = `Génère une fiche produit complète p
 
 export const IMAGE_VALIDATION_PROMPT = `Tu es un expert en reconnaissance visuelle de produits cosmétiques et parfums.
 
-**Tâche** : Vérifie si l'image correspond au produit décrit.
+**Mission CRITIQUE** : Vérifier que l'image est appropriée et contient bien un produit de beauté/parfum.
 
-**Image** : {{imageUrl}}
-**Produit attendu** : {{productName}}
-**Marque attendue** : {{brand}}
-**Catégorie** : {{category}}
+**Vérifications obligatoires** :
+1. **Contenu approprié** : L'image est-elle professionnelle et appropriée ? (PAS de contenu offensant, violent, sexuel, etc.)
+2. **Type de produit** : S'agit-il d'un produit de beauté, parfum, cosmétique ou soin ?
+3. **Correspondance marque** : La marque "{{brand}}" est-elle visible sur l'emballage ?
+4. **Correspondance produit** : Le nom "{{productName}}" correspond-il au produit visible ?
+5. **Qualité image** : L'image est-elle claire, nette et professionnelle ?
+6. **Authenticité** : Pas de signes évidents de contrefaçon ?
 
-**Vérifications** :
-1. Le produit visible est-il de la bonne marque ?
-2. Le nom du produit correspond-il ?
-3. Le packaging est-il cohérent avec la catégorie ?
-4. Y a-t-il des signes de contrefaçon ?
+**Catégorie attendue** : {{category}}
 
-**Score de confiance** :
-- 90-100% : Correspondance parfaite
-- 70-89% : Correspondance probable (packaging différent, édition limitée)
-- 50-69% : Doute (vérification recommandée)
-- 0-49% : Mauvaise image (produit différent ou invalide)
+**Critères de validation** :
+- ✅ VALIDE (90-100%) : Parfum/cosmétique authentique, marque et produit correspondent
+- ⚠️ PROBABLE (70-89%) : Bon produit mais packaging différent ou marque/nom partiellement visible
+- ⚠️ DOUTEUX (50-69%) : Produit de beauté mais marque/nom ne correspondent pas clairement
+- ❌ INVALIDE (0-49%) : 
+  * Pas un produit de beauté/parfum
+  * Image inappropriée ou de mauvaise qualité
+  * Produit totalement différent
+  * Contenu offensant
 
-**Retourne** : JSON avec isValid (boolean), confidence (0-100), message (explication), suggestions? (si erreur)`;
+**IMPORTANT** : Si l'image ne contient PAS de produit de beauté/parfum, score = 0.
+
+**Format de réponse (JSON strict)** :
+{
+  "isValid": true/false,
+  "confidence": 0-100,
+  "message": "Explication claire en français",
+  "detectedProduct": "Nom du produit détecté sur l'image",
+  "detectedBrand": "Marque détectée sur l'image",
+  "isAppropriate": true/false,
+  "isBeautyProduct": true/false,
+  "suggestions": ["Conseil 1", "Conseil 2"] (si isValid = false)
+}`;

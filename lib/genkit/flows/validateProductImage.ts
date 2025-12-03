@@ -15,25 +15,41 @@ import { IMAGE_VALIDATION_PROMPT } from '../prompts/system';
  */
 export async function validateProductImageFlow(input: ImageValidationInput): Promise<ImageValidationOutput> {
   console.log('[validateProductImage] Starting with:', {
-    imageUrl: input.imageUrl,
+    imageDataLength: input.imageUrl?.length || 0,
     productName: input.productName,
     brand: input.brand,
   });
 
   const prompt = IMAGE_VALIDATION_PROMPT
-    .replace('{{imageUrl}}', input.imageUrl)
     .replace('{{productName}}', input.productName)
     .replace('{{brand}}', input.brand)
     .replace('{{category}}', input.category);
 
   try {
-    // Appel à Gemini Vision
+    // Vérifier que l'image est en base64
+    const base64Data = input.imageUrl.startsWith('data:image')
+      ? input.imageUrl.split(',')[1]
+      : input.imageUrl;
+
+    // Déterminer le MIME type
+    let mimeType = 'image/jpeg';
+    if (input.imageUrl.includes('data:image/png')) {
+      mimeType = 'image/png';
+    } else if (input.imageUrl.includes('data:image/webp')) {
+      mimeType = 'image/webp';
+    }
+
+    console.log('[validateProductImage] Calling Gemini Vision API...');
+
+    // Appel à Gemini Vision avec image
     const result = await geminiModel.generateContent([
-      prompt,
+      {
+        text: prompt + '\n\nRéponds UNIQUEMENT en JSON, sans texte additionnel.',
+      },
       {
         inlineData: {
-          mimeType: 'image/jpeg',
-          data: input.imageUrl,
+          mimeType,
+          data: base64Data,
         },
       },
     ]);
@@ -41,12 +57,12 @@ export async function validateProductImageFlow(input: ImageValidationInput): Pro
     const response = result.response;
     const content = response.text();
 
-    console.log('[validateProductImage] AI response received');
+    console.log('[validateProductImage] Raw AI response:', content);
 
-    // Parser JSON
+    // Parser JSON (extraire le JSON du texte)
     let jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('Format de réponse invalide');
+      throw new Error('Format de réponse invalide - pas de JSON trouvé');
     }
 
     const output = JSON.parse(jsonMatch[0]) as ImageValidationOutput;
@@ -54,6 +70,7 @@ export async function validateProductImageFlow(input: ImageValidationInput): Pro
     console.log('[validateProductImage] Result:', {
       isValid: output.isValid,
       confidence: output.confidence,
+      message: output.message,
     });
 
     return output;
@@ -65,7 +82,11 @@ export async function validateProductImageFlow(input: ImageValidationInput): Pro
       isValid: false,
       confidence: 0,
       message: `Erreur validation: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
-      suggestions: ['Vérifiez que l\'image est accessible', 'Utilisez une URL HTTPS valide'],
+      suggestions: [
+        'Vérifiez que l\'image est bien un produit de beauté/parfum',
+        'Utilisez une photo claire et nette du produit',
+        'Assurez-vous que la marque et le nom sont visibles',
+      ],
     };
   }
 }

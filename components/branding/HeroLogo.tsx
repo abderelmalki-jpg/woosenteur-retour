@@ -22,7 +22,7 @@ export default function HeroLogo() {
       {/* Logo */}
       <div className="relative w-48 h-48 flex items-center justify-center">
         <Image
-          src="/logo.png"
+          src="https://res.cloudinary.com/dhjwimevi/image/upload/e_background_removal/v1764748415/icon_1_x7jpic.png"
           alt="WooSenteur Logo"
           width={192}
           height={192}
@@ -38,7 +38,7 @@ export default function HeroLogo() {
         transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
         className="absolute -bottom-2 -right-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg"
       >
-        ✨ IA
+        ✨ Agent
       </motion.div>
     </motion.div>
   );

@@ -8,7 +8,7 @@ import { auth, db } from '@/lib/firebase/admin';
 import { generateProductCSV, generateWooCommerceCSV } from '@/lib/utils/csv';
 import { exportToWooCommerce, type WooCommerceConfig } from '@/lib/woocommerce/api';
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic'; // Commenté pour output:export
 
 export async function POST(request: NextRequest) {
   try {

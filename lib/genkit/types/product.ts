@@ -45,7 +45,7 @@ export interface ValidationResult {
 
 // Types pour l'image validation
 export const ImageValidationInputSchema = z.object({
-  imageUrl: z.string().url(),
+  imageUrl: z.string(), // Accepte base64 ou URL
   productName: z.string(),
   brand: z.string(),
   category: z.string(),
@@ -57,6 +57,10 @@ export const ImageValidationOutputSchema = z.object({
   isValid: z.boolean(),
   confidence: z.number(),
   message: z.string(),
+  detectedProduct: z.string().optional(),
+  detectedBrand: z.string().optional(),
+  isAppropriate: z.boolean().optional(),
+  isBeautyProduct: z.boolean().optional(),
   suggestions: z.array(z.string()).optional(),
 });
 

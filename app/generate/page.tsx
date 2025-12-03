@@ -51,7 +51,7 @@ function GeneratePageContent() {
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState('');
   
-  // État génération IA
+  // État génération
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
@@ -87,46 +87,23 @@ function GeneratePageContent() {
   const [wooConsumerKey, setWooConsumerKey] = useState('');
   const [wooConsumerSecret, setWooConsumerSecret] = useState('');
   const [isExporting, setIsExporting] = useState(false);
-  const [isLoadingAdminConfig, setIsLoadingAdminConfig] = useState(false);
-  const [adminConfigLoaded, setAdminConfigLoaded] = useState(false);
 
   // ==================== HANDLERS ====================
   
   /**
-   * Charger la configuration WooCommerce admin si superadmin
+   * Charger automatiquement les identifiants dubainegoce.fr pour l'admin
    */
   useEffect(() => {
-    if (activeTab === 'export' && user && userProfile?.role === 'superadmin' && !adminConfigLoaded && !isLoadingAdminConfig) {
-      const loadConfig = async () => {
-        setIsLoadingAdminConfig(true);
-        try {
-          const idToken = await user.getIdToken();
-          const response = await fetch('/api/admin/woocommerce-config', {
-            headers: { Authorization: `Bearer ${idToken}` },
-          });
-
-          const result = await response.json();
-          
-          if (result.success && result.config) {
-            setWooStoreUrl(result.config.url);
-            setWooConsumerKey(result.config.consumerKey);
-            setWooConsumerSecret(result.config.consumerSecret);
-            setAdminConfigLoaded(true);
-            console.log('✅ Configuration admin dubainegoce.fr chargée automatiquement');
-          }
-        } catch (error) {
-          console.error('❌ Erreur chargement config admin:', error);
-        } finally {
-          setIsLoadingAdminConfig(false);
-        }
-      };
-      
-      loadConfig();
+    if (user && userProfile?.role === 'superadmin' && userProfile?.email === 'abderelmalki@gmail.com') {
+      setWooStoreUrl('https://dubainegoce.fr');
+      setWooConsumerKey('ck_f056bf8321dbac856d2d1cc03e380732bc2d811e');
+      setWooConsumerSecret('cs_dadb3ffdbcac6646ebb0f0e735db5bb8d104d0b6');
+      console.log('✅ Configuration dubainegoce.fr chargée pour admin');
     }
-  }, [activeTab, user, userProfile, adminConfigLoaded, isLoadingAdminConfig]);
+  }, [user, userProfile]);
 
   /**
-   * Génération IA avec pipeline en 7 étapes
+   * Génération automatique avec pipeline en 7 étapes
    */
   const handleGenerate = async () => {
     if (!productName || !brand || !category) {
@@ -412,7 +389,7 @@ function GeneratePageContent() {
   };
 
   /**
-   * Export WooCommerce
+   * Export WooCommerce - Direct REST API call avec upload image Firebase
    */
   const handleExportWooCommerce = async () => {
     if (!wooStoreUrl || !wooConsumerKey || !wooConsumerSecret) {
@@ -420,68 +397,127 @@ function GeneratePageContent() {
       return;
     }
 
-    // ✅ Validation désactivée pour admin - permet export direct avec identifiants pré-configurés
-
     setIsExporting(true);
     
     try {
-      // Tester la connexion d'abord
-      const testResponse = await fetch('/api/export/woocommerce', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          config: {
-            url: wooStoreUrl,
-            consumerKey: wooConsumerKey,
-            consumerSecret: wooConsumerSecret,
-          },
-          testOnly: true,
-        }),
-      });
+      let imageUrl = '';
 
-      const testResult = await testResponse.json();
-      
-      if (!testResult.success) {
-        throw new Error(testResult.message);
+      // 1. Upload de l'image sur Firebase Storage si elle existe
+      if (mainImage && user && savedProductId) {
+        console.log('📤 Upload de l\'image sur Firebase Storage...');
+        imageUrl = await uploadProductImage(user.uid, savedProductId, mainImage, 'main');
+        console.log('✅ Image uploadée:', imageUrl);
       }
 
-      // Exporter le produit
+      // 2. Créer les credentials OAuth1.0a
+      const auth = btoa(`${wooConsumerKey}:${wooConsumerSecret}`);
+      const apiUrl = `${wooStoreUrl}/wp-json/wc/v3/products`;
+
+      // 3. Préparer les données produit avec SEO Rank Math complet
       const productData = {
         name: productName,
-        price: parseFloat(price) || 0,
-        category,
-        shortDescription,
-        longDescription,
-        seoTitle,
-        mainKeyword,
-        tags,
-        weight: parseFloat(weight) || 0,
-        imageUrl: mainImagePreview,
-        confidenceScore: generationResult?.confidenceScore,
+        type: 'simple',
+        status: 'publish', // Publié par défaut
+        featured: false,
+        catalog_visibility: 'visible',
+        regular_price: price,
+        description: longDescription,
+        short_description: shortDescription,
+        sku: '', // Laissé vide, WooCommerce générera automatiquement
+        manage_stock: true,
+        stock_quantity: 10, // Stock initial
+        stock_status: 'instock',
+        sold_individually: false,
+        reviews_allowed: true,
+        categories: [{ name: category }],
+        tags: tags.map(tag => ({ name: tag })),
+        weight: weight,
+        images: imageUrl ? [{ src: imageUrl }] : [],
+        // Paramètres de taxe
+        tax_status: 'taxable',
+        tax_class: '',
+        // Attributs produit structurés
+        attributes: [
+          { name: 'Marque', position: 0, visible: true, variation: false, options: [brand] },
+          { name: 'Famille olfactive', position: 1, visible: true, variation: false, options: [category] },
+          { name: 'Contenance', position: 2, visible: true, variation: false, options: [volume ? `${volume} ml` : '100 ml'] },
+          { name: 'Genre', position: 3, visible: true, variation: false, options: ['Mixte'] },
+        ],
+        meta_data: [
+          // ============ SEO Rank Math ============
+          { key: 'rank_math_title', value: seoTitle },
+          { key: 'rank_math_focus_keyword', value: mainKeyword },
+          { key: 'rank_math_description', value: shortDescription },
+          { key: 'rank_math_breadcrumb', value: `Accueil > Boutique > ${category} > ${productName}` },
+          { key: 'rank_math_seo_score', value: '90' }, // Score SEO par défaut
+          { key: 'rank_math_robots', value: 'a:1:{i:0;s:5:"index";}' }, // Indexable par défaut
+          { key: 'rank_math_internal_links_processed', value: '1' },
+          { key: 'rank_math_analytic_object_id', value: `${Date.now()}` },
+          { key: 'rank_math_primary_product_cat', value: category },
+          
+          // ============ Schema.org pour Rank Math ============
+          { key: 'rank_math_schema_Article', value: JSON.stringify({
+            '@type': 'Product',
+            name: productName,
+            description: shortDescription,
+            brand: { '@type': 'Brand', name: brand },
+            offers: {
+              '@type': 'Offer',
+              price: price,
+              priceCurrency: 'EUR',
+              availability: 'https://schema.org/InStock'
+            }
+          })},
+          
+          // ============ Métadonnées WooSenteur ============
+          { key: '_seo_title', value: seoTitle },
+          { key: '_main_keyword', value: mainKeyword },
+          { key: '_confidence_score', value: generationResult?.confidenceScore || 0 },
+          { key: '_generated_by', value: 'WooSenteur AI' },
+          { key: '_generation_date', value: new Date().toISOString() },
+          
+          // ============ Attributs produit (compatibilité anciennes versions) ============
+          { key: '_product_attributes', value: JSON.stringify({
+            marque: { name: 'Marque', value: brand, visible: true, variation: false },
+            famille: { name: 'Famille olfactive', value: category, visible: true, variation: false },
+            contenance: { name: 'Contenance', value: volume ? `${volume} ml` : '100 ml', visible: true, variation: false },
+            genre: { name: 'Genre', value: 'Mixte', visible: true, variation: false },
+          })},
+          
+          // ============ Métadonnées additionnelles pour import/export ============
+          { key: '_virtual', value: 'no' },
+          { key: '_downloadable', value: 'no' },
+          { key: '_sold_individually', value: 'no' },
+          { key: '_manage_stock', value: 'yes' },
+          { key: '_stock_status', value: 'instock' },
+          { key: '_backorders', value: 'no' },
+          { key: '_low_stock_amount', value: '' },
+          { key: '_weight', value: weight || '100' },
+        ],
       };
 
-      const exportResponse = await fetch('/api/export/woocommerce', {
+      console.log('🚀 Export vers WooCommerce:', apiUrl);
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          config: {
-            url: wooStoreUrl,
-            consumerKey: wooConsumerKey,
-            consumerSecret: wooConsumerSecret,
-          },
-          products: [productData],
-        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${auth}`,
+        },
+        body: JSON.stringify(productData),
       });
 
-      const exportResult = await exportResponse.json();
-      
-      if (exportResult.success) {
-        alert(`✅ ${exportResult.message}`);
-      } else {
-        throw new Error(exportResult.message || 'Erreur lors de l\'export');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
       }
+
+      const result = await response.json();
+      alert(`✅ Produit exporté avec succès ! ID: ${result.id}${imageUrl ? '\n🖼️ Image incluse' : ''}`);
+      console.log('✅ Produit créé:', result);
+
     } catch (error: any) {
-      console.error('❌ Erreur export WooCommerce :', error);
+      console.error('❌ Erreur export WooCommerce:', error);
       alert(`❌ Erreur: ${error.message}`);
     } finally {
       setIsExporting(false);
@@ -498,7 +534,7 @@ function GeneratePageContent() {
             Générer une Fiche Produit
           </h1>
           <p className="text-gray-600">
-            IA spécialisée en produits beauté • Pipeline de validation en 7 étapes
+            Agent intelligent spécialisé en produits beauté • Pipeline de validation en 7 étapes
           </p>
         </div>
         
@@ -544,7 +580,7 @@ function GeneratePageContent() {
                 Informations du Produit
               </CardTitle>
               <CardDescription>
-                Saisissez les informations de base pour démarrer la génération par IA
+                Saisissez les informations de base pour démarrer la génération automatique
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -655,24 +691,6 @@ function GeneratePageContent() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Prix, Volume, Poids */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Prix (€) *</Label>
-                  <Input id="price" type="number" step="0.01" placeholder="Ex: 89.90" value={price} onChange={(e) => setPrice(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="volume">Contenance (ml) *</Label>
-                  <Input id="volume" type="number" placeholder="Ex: 100" value={volume} onChange={(e) => setVolume(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="weight">Poids (g)</Label>
-                  <Input id="weight" type="number" placeholder="Ex: 300" value={weight} onChange={(e) => setWeight(e.target.value)} />
-                </div>
-              </div>
-
-              <Separator />
-
               {/* SEO */}
               <div className="space-y-2">
                 <Label htmlFor="seoTitle">Titre SEO *</Label>
@@ -709,6 +727,27 @@ function GeneratePageContent() {
                   placeholder="Description complète (4 paragraphes recommandés)"
                   className="whitespace-pre-wrap font-mono text-sm"
                 />
+              </div>
+
+              <Separator />
+
+              {/* Prix, Volume, Poids - Après les descriptions */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-gray-700">Informations commerciales</h3>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Prix (€) *</Label>
+                    <Input id="price" type="number" step="0.01" placeholder="Ex: 89.90" value={price} onChange={(e) => setPrice(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="volume">Contenance (ml) *</Label>
+                    <Input id="volume" type="number" placeholder="Ex: 100" value={volume} onChange={(e) => setVolume(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="weight">Poids (g)</Label>
+                    <Input id="weight" type="number" placeholder="Ex: 300" value={weight} onChange={(e) => setWeight(e.target.value)} />
+                  </div>
+                </div>
               </div>
 
               {/* Tags */}
@@ -949,7 +988,7 @@ function GeneratePageContent() {
         {/* ==================== ONGLET 4 : EXPORT ==================== */}
         <TabsContent value="export" className="space-y-6">
           {/* Badge admin config chargée */}
-          {adminConfigLoaded && (
+          {userProfile?.role === 'superadmin' && userProfile?.email === 'abderelmalki@gmail.com' && (
             <Alert className="bg-purple-50 border-purple-200">
               <CheckCircle2 className="h-4 w-4 text-purple-600" />
               <AlertDescription className="text-purple-800">

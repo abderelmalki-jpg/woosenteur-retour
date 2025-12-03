@@ -20,7 +20,7 @@ export default function Home() {
 
             <div className="flex justify-center">
               <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-sm py-1.5 px-4">
-                ✨ Propulsé par l'IA Gemini 2.0
+                ✨ Propulsé par notre agent intelligent
               </Badge>
             </div>
             
@@ -71,7 +71,7 @@ export default function Home() {
               </div>
               <div className="text-center space-y-2">
                 <p className="text-5xl font-bold bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">7</p>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Étapes validation IA</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Étapes de validation</p>
               </div>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function Home() {
             </span>
           </h2>
           <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Notre IA spécialisée en beauté génère des fiches produits professionnelles en 3 étapes simples
+            Notre agent intelligent spécialisé en beauté génère des fiches produits professionnelles en 3 étapes simples
           </p>
         </div>
 
@@ -102,8 +102,8 @@ export default function Home() {
             },
             {
               step: "2",
-              title: "L'IA génère la fiche",
-              description: "En 3 minutes, recevez une description optimisée SEO avec titre, mots-clés et notes olfactives.",
+              title: "Génération automatique",
+              description: "En 3 minutes, notre agent intelligent génère une description optimisée SEO avec titre, mots-clés et notes olfactives.",
               icon: Sparkles,
               color: "from-purple-600 to-indigo-600"
             },
@@ -150,7 +150,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-              Une IA hyper-spécialisée en produits beauté pour des fiches produits qui convertissent
+              Un agent intelligent hyper-spécialisé en produits beauté pour des fiches produits qui convertissent
             </p>
           </div>
 
@@ -171,7 +171,7 @@ export default function Home() {
             {
               icon: Shield,
               title: "Validation en 7 étapes",
-              description: "Notre IA vérifie l'existence du produit, corrige les fautes et valide les images pour éviter les erreurs.",
+              description: "Notre agent intelligent vérifie l'existence du produit, corrige les fautes et valide les images pour éviter les erreurs.",
               gradient: "from-indigo-600 to-violet-600"
             },
             {
@@ -238,7 +238,7 @@ export default function Home() {
               name: "Alexandre Dubois",
               role: "E-commerce manager",
               avatar: "AD",
-              testimonial: "L'IA comprend vraiment les nuances des parfums. Les pyramides olfactives sont précises et les descriptions sont convaincantes. Un must-have !",
+              testimonial: "L'agent intelligent comprend vraiment les nuances des parfums. Les pyramides olfactives sont précises et les descriptions sont convaincantes. Un must-have !",
               rating: 5
             },
             {
