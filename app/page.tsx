@@ -13,21 +13,27 @@ export default function Home() {
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 max-w-7xl">
         <div className="max-w-5xl mx-auto">
           <div className="text-center space-y-8">
-            {/* Logo Hero */}
-            <div className="flex justify-center">
-              <HeroLogo />
-            </div>
-
-            <div className="flex justify-center">
+            {/* Titre Hero Principal */}
+            <div className="space-y-4">
               <Badge className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 text-sm py-1.5 px-4">
                 ✨ Propulsé par notre agent intelligent
               </Badge>
+              
+              <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                  WooSenteur
+                </span>
+              </h1>
+              
+              <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-700 dark:text-slate-300">
+                L'agent intelligent pour vos fiches produits beauté
+              </p>
             </div>
             
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight">
               De <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">3 Heures</span> à{" "}
               <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">3 Minutes</span>
-            </h1>
+            </h2>
             
             <p className="text-lg sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 leading-relaxed">
               Générez des fiches produits WooCommerce optimisées pour le SEO avec{" "}
@@ -211,70 +217,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 sm:py-28">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 sm:mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif mb-6">
-              <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                Ce que disent nos clients
-              </span>
-            </h2>
-            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              Des e-commerçants beauté satisfaits qui ont transformé leur workflow
-            </p>
-          </div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[
-            {
-              name: "Sophie Martin",
-              role: "Gérante boutique beauté",
-              avatar: "SM",
-              testimonial: "WooSenteur m'a fait gagner un temps fou ! Je peux maintenant créer 20 fiches produits en une journée au lieu de 3. Le score SEO est impressionnant.",
-              rating: 5
-            },
-            {
-              name: "Alexandre Dubois",
-              role: "E-commerce manager",
-              avatar: "AD",
-              testimonial: "L'agent intelligent comprend vraiment les nuances des parfums. Les pyramides olfactives sont précises et les descriptions sont convaincantes. Un must-have !",
-              rating: 5
-            },
-            {
-              name: "Marie Laurent",
-              role: "Consultante beauté",
-              avatar: "ML",
-              testimonial: "Mes clients adorent ! La qualité des fiches produits a considérablement amélioré leur taux de conversion. Je recommande à 100%.",
-              rating: 5
-            }
-          ].map((testimonial, index) => (
-            <Card key={index} className="p-8 border-2 bg-white dark:bg-slate-900 hover:shadow-2xl hover:border-violet-400 transition-all duration-300 text-center">
-              <div className="flex items-center justify-center gap-1 mb-6">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              
-              <p className="text-base text-slate-700 dark:text-slate-300 mb-8 italic leading-relaxed">
-                « {testimonial.testimonial} »
-              </p>
-              
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-violet-500/50">
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <p className="font-bold text-lg text-slate-900 dark:text-white">{testimonial.name}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">{testimonial.role}</p>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-        </div>
-      </section>
-
       {/* Pricing Preview */}
       <section className="py-20 sm:py-28 bg-gradient-to-br from-violet-50/50 via-purple-50/50 to-indigo-50/50 dark:from-slate-900 dark:via-violet-950/30 dark:to-slate-900">
         <div className="container mx-auto px-4">
@@ -328,19 +270,21 @@ export default function Home() {
               highlighted: false
             }
           ].map((plan, index) => (
-            <Card 
-              key={index} 
-              className={`p-6 border-2 bg-white hover:shadow-xl transition-all ${
-                plan.highlighted ? 'ring-2 ring-violet-600 scale-105' : ''
-              }`}
-            >
+            <div key={index} className="relative">
               {plan.highlighted && (
-                <Badge className="mb-4 w-full bg-gradient-to-r from-violet-600 to-purple-600 text-white">
-                  ⭐ Plus populaire
-                </Badge>
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                  <Badge className="bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg whitespace-nowrap px-4 py-1">
+                    ⭐ Plus populaire
+                  </Badge>
+                </div>
               )}
               
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h3>
+              <Card 
+                className={`p-6 border-2 bg-white hover:shadow-xl transition-all h-full ${
+                  plan.highlighted ? 'ring-2 ring-violet-600 scale-105' : ''
+                }`}
+              >
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h3>
               <div className="mb-4">
                 <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
                 <span className="text-slate-600">{plan.period}</span>
@@ -367,7 +311,8 @@ export default function Home() {
               >
                 <Link href="/pricing">{plan.cta}</Link>
               </Button>
-            </Card>
+              </Card>
+            </div>
           ))}
         </div>
 

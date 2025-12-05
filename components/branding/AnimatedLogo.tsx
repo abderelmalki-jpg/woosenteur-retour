@@ -15,7 +15,7 @@ export default function AnimatedLogo({ className = '' }: AnimatedLogoProps) {
   return (
     <div className={`relative ${className}`}>
       <Image
-        src="https://res.cloudinary.com/dhjwimevi/image/upload/e_background_removal/v1764748415/icon_1_x7jpic.png"
+        src="https://res.cloudinary.com/dhjwimevi/image/upload/v1764753532/logo_1_qpyksp.png"
         alt="WooSenteur Logo"
         width={40}
         height={40}

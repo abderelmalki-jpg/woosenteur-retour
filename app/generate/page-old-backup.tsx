@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -43,6 +45,16 @@ interface ProductData extends GenerationResult {
 }
 
 export default function GeneratePage() {
+  // Fonction d'upload image produit avec Firebase Auth
+  async function uploadProductImage(file: File, productId: string, imageType: string): Promise<string> {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error('Utilisateur non authentifié');
+    const storage = getStorage();
+    const storageRef = ref(storage, `products/${user.uid}/${productId}/${imageType}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  }
   // Étape 1 : Informations de base
   const [productName, setProductName] = useState('');
   const [brand, setBrand] = useState('');
@@ -137,33 +149,37 @@ export default function GeneratePage() {
     }
   };
 
-  const handleMainImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setMainImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMainImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      // Upload vers Firebase Storage avec workflow sécurisé
+      try {
+        // Utilise le nom du produit comme productId, imageType = 'main'
+        const url = await uploadProductImage(file, productName || 'nouveau-produit', 'main');
+        setMainImagePreview(url);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erreur upload image');
+      }
     }
   };
 
-  const handleGalleryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newImages = [...galleryImages, ...files].slice(0, 5); // Max 5 images
     setGalleryImages(newImages);
 
-    // Créer les previews
+    // Upload chaque image vers Firebase Storage et récupérer l'URL
     const newPreviews = [...galleryPreviews];
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        newPreviews.push(reader.result as string);
+    for (let i = 0; i < files.length && newPreviews.length < 5; i++) {
+      try {
+        const url = await uploadProductImage(files[i], productName || 'nouveau-produit', `gallery${newPreviews.length + 1}`);
+        newPreviews.push(url);
         setGalleryPreviews([...newPreviews]);
-      };
-      reader.readAsDataURL(file);
-    });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erreur upload image galerie');
+      }
+    }
   };
 
   const removeGalleryImage = (index: number) => {
@@ -391,8 +407,7 @@ export default function GeneratePage() {
                       className="mt-3"
                       size="sm"
                     >
-                      Continuer vers les détails →
-                    </Button>
+                      Continuer vers les détails →</Button>
                   </AlertDescription>
                 </Alert>
               )}

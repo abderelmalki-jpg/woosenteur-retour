@@ -22,6 +22,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { saveProduct, uploadProductImage, uploadGalleryImages } from '@/lib/firebase/products';
 import { decrementCredits } from '@/lib/firebase/users';
 import { API_GENERATE_URL, getApiHeaders } from '@/lib/api/config';
+import { validateImageAction } from '../actions/imageValidation';
 
 /**
  * Page de génération de fiches produits WooSenteur
@@ -73,6 +74,8 @@ function GeneratePageContent() {
   // ==================== ONGLET 3 : Images ====================
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState('');
+  const [externalImageUrl, setExternalImageUrl] = useState(''); // Nouveau champ pour URL externe
+  const [useExternalUrl, setUseExternalUrl] = useState(false); // Toggle entre upload local et URL externe
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   const [isValidatingImage, setIsValidatingImage] = useState(false);
@@ -116,6 +119,7 @@ function GeneratePageContent() {
       setGenerationError('❌ Crédits insuffisants. Veuillez passer à un plan supérieur.');
       return;
     }
+    // Pré-remplissage admin déjà géré par un useEffect au niveau du composant
 
     setIsGenerating(true);
     setGenerationError(null);
@@ -273,9 +277,12 @@ function GeneratePageContent() {
   const handleMainImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setMainImage(file);
+      // Plus de validation stricte : on accepte tout
       const reader = new FileReader();
-      reader.onloadend = () => setMainImagePreview(reader.result as string);
+      reader.onloadend = () => {
+        setMainImagePreview(reader.result as string);
+        setMainImage(file);
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -287,11 +294,9 @@ function GeneratePageContent() {
     const files = Array.from(e.target.files || []);
     const remainingSlots = 5 - galleryImages.length;
     const filesToAdd = files.slice(0, remainingSlots);
-
     const newImages = [...galleryImages, ...filesToAdd];
     setGalleryImages(newImages);
-
-    // Génération des previews
+    // Génération des previews sans validation
     filesToAdd.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -299,6 +304,7 @@ function GeneratePageContent() {
       };
       reader.readAsDataURL(file);
     });
+    e.target.value = '';
   };
 
   const removeGalleryImage = (index: number) => {
@@ -310,8 +316,10 @@ function GeneratePageContent() {
    * Validation IA de l'image principale (optionnel)
    */
   const handleValidateImage = async () => {
-    if (!mainImagePreview || !productName || !brand) {
-      alert('Veuillez uploader une image et remplir le nom du produit et la marque');
+    const imageToValidate = useExternalUrl ? externalImageUrl : mainImagePreview;
+    
+    if (!imageToValidate || !productName || !brand) {
+      alert('Veuillez fournir une image (upload ou URL) et remplir le nom du produit et la marque');
       return;
     }
 
@@ -319,39 +327,15 @@ function GeneratePageContent() {
     setImageValidationResult(null);
 
     try {
-      if (!user) {
-        throw new Error('Utilisateur non connecté');
-      }
+      const input = {
+        imageUrl: imageToValidate,
+        productName,
+        brand,
+        category, // Assuming category is available in state
+      };
+      const result = await validateImageAction(input);
+      setImageValidationResult(result);
 
-      const idToken = await user.getIdToken();
-
-      const response = await fetch('/api/validate-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({
-          imageUrl: mainImagePreview,
-          productName,
-          brand,
-          category,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la validation');
-      }
-
-      const result = await response.json();
-      setImageValidationResult({
-        isValid: result.isValid,
-        confidence: result.confidence,
-        message: result.message,
-      });
-
-      console.log('✅ Validation image:', result);
     } catch (error: any) {
       console.error('❌ Erreur validation image:', error);
       alert(`❌ Erreur: ${error.message}`);
@@ -392,22 +376,48 @@ function GeneratePageContent() {
    * Export WooCommerce - Direct REST API call avec upload image Firebase
    */
   const handleExportWooCommerce = async () => {
+    console.log('[WooCommerce Export] Starting export...');
     if (!wooStoreUrl || !wooConsumerKey || !wooConsumerSecret) {
       alert('Veuillez remplir toutes les clés WooCommerce');
       return;
     }
 
+    // Validation de l'image
+    if (!useExternalUrl && !mainImage) {
+      alert('Veuillez uploader une image principale ou fournir une URL externe');
+      return;
+    }
+    if (useExternalUrl && !externalImageUrl) {
+      alert('Veuillez fournir une URL d\'image externe valide');
+      return;
+    }
+
     setIsExporting(true);
-    
     try {
       let imageUrl = '';
 
-      // 1. Upload de l'image sur Firebase Storage si elle existe
-      if (mainImage && user && savedProductId) {
-        console.log('📤 Upload de l\'image sur Firebase Storage...');
-        imageUrl = await uploadProductImage(user.uid, savedProductId, mainImage, 'main');
-        console.log('✅ Image uploadée:', imageUrl);
+      if (useExternalUrl) {
+        // Utiliser l'URL externe directement
+        imageUrl = externalImageUrl;
+        console.log('🖼️ Utilisation URL externe:', imageUrl);
+      } else {
+        // Upload vers Firebase Storage
+        if (mainImage && user && savedProductId) {
+          console.log('[WooCommerce Export] Attempting image upload to Firebase Storage...');
+          try {
+            imageUrl = await uploadProductImage(user.uid, savedProductId, mainImage, 'main');
+            console.log('✅ [WooCommerce Export] Image uploaded successfully:', imageUrl);
+          } catch (err) {
+            console.error('❌ [WooCommerce Export] Error uploading image to Firebase:', err);
+            alert('Erreur upload image. Utilisez une URL externe à la place.');
+            setIsExporting(false);
+            return;
+          }
+        }
       }
+
+      // Export sans blocage même si imageUrl est vide
+      console.log('🛒 Export WooCommerce avec imageUrl:', imageUrl);
 
       // 2. Créer les credentials OAuth1.0a
       const auth = btoa(`${wooConsumerKey}:${wooConsumerSecret}`);
@@ -496,7 +506,9 @@ function GeneratePageContent() {
         ],
       };
 
-      console.log('🚀 Export vers WooCommerce:', apiUrl);
+      console.log('[WooCommerce Export] Preparing product data:', productData);
+      console.log('[WooCommerce Export] API URL:', apiUrl);
+      console.log('[WooCommerce Export] Making API call to WooCommerce...');
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -513,13 +525,15 @@ function GeneratePageContent() {
       }
 
       const result = await response.json();
+      console.log('✅ [WooCommerce Export] Product exported successfully. Result:', result);
       alert(`✅ Produit exporté avec succès ! ID: ${result.id}${imageUrl ? '\n🖼️ Image incluse' : ''}`);
       console.log('✅ Produit créé:', result);
 
     } catch (error: any) {
-      console.error('❌ Erreur export WooCommerce:', error);
+      console.error('❌ [WooCommerce Export] Error during WooCommerce export:', error);
       alert(`❌ Erreur: ${error.message}`);
     } finally {
+      console.log('[WooCommerce Export] Export process finished. Setting isExporting to false.');
       setIsExporting(false);
     }
   };
@@ -827,38 +841,94 @@ function GeneratePageContent() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Toggle entre upload local et URL externe */}
+              <div className="flex items-center space-x-4">
+                <Label className="text-sm font-medium">Source de l'image :</Label>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id="local-upload"
+                      name="image-source"
+                      checked={!useExternalUrl}
+                      onChange={() => setUseExternalUrl(false)}
+                      className="h-4 w-4"
+                    />
+                    <Label htmlFor="local-upload" className="text-sm">Upload local</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id="external-url"
+                      name="image-source"
+                      checked={useExternalUrl}
+                      onChange={() => setUseExternalUrl(true)}
+                      className="h-4 w-4"
+                    />
+                    <Label htmlFor="external-url" className="text-sm">URL externe (OneDrive, Cloudinary, etc.)</Label>
+                  </div>
+                </div>
+              </div>
+
               {/* Image principale */}
               <div className="space-y-2">
                 <Label>Image Principale *</Label>
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-[#9333EA] transition">
-                  {mainImagePreview ? (
-                    <div className="relative inline-block">
-                      <img src={mainImagePreview} alt="Preview" className="max-h-64 rounded-lg" />
-                      <Button 
-                        onClick={() => { 
-                          setMainImage(null); 
-                          setMainImagePreview(''); 
-                          setImageValidationResult(null);
-                        }} 
-                        variant="destructive" 
-                        size="icon" 
-                        className="absolute top-2 right-2"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-600">Cliquez pour télécharger une image</p>
-                      <p className="text-xs text-gray-400 mt-1">PNG, JPG ou WEBP (max 5MB)</p>
-                      <input type="file" accept="image/*" onChange={handleMainImageUpload} className="hidden" />
-                    </label>
-                  )}
-                </div>
+                {useExternalUrl ? (
+                  // Input pour URL externe
+                  <div className="space-y-2">
+                    <Input
+                      type="url"
+                      placeholder="https://exemple.com/image.jpg"
+                      value={externalImageUrl}
+                      onChange={(e) => setExternalImageUrl(e.target.value)}
+                      className="h-11"
+                    />
+                    <p className="text-xs text-gray-500">
+                      Collez l'URL publique de votre image depuis OneDrive, Google Drive, Cloudinary, etc.
+                    </p>
+                    {externalImageUrl && (
+                      <div className="mt-2">
+                        <img
+                          src={externalImageUrl}
+                          alt="Preview"
+                          className="max-h-64 rounded-lg border"
+                          onError={() => alert('URL invalide ou image inaccessible')}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Upload local classique
+                  <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-[#9333EA] transition">
+                    {mainImagePreview ? (
+                      <div className="relative inline-block">
+                        <img src={mainImagePreview} alt="Preview" className="max-h-64 rounded-lg" />
+                        <Button 
+                          onClick={() => { 
+                            setMainImage(null); 
+                            setMainImagePreview(''); 
+                            setImageValidationResult(null);
+                          }} 
+                          variant="destructive" 
+                          size="icon" 
+                          className="absolute top-2 right-2"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer">
+                        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+                        <p className="text-sm text-gray-600">Cliquez pour télécharger une image</p>
+                        <p className="text-xs text-gray-400 mt-1">PNG, JPG ou WEBP (max 5MB)</p>
+                        <input type="file" accept="image/*" onChange={handleMainImageUpload} className="hidden" />
+                      </label>
+                    )}
+                  </div>
+                )}
                 
                 {/* Bouton validation IA optionnel */}
-                {mainImagePreview && (
+                {(mainImagePreview || externalImageUrl) && (
                   <div className="space-y-3">
                     <Button
                       onClick={handleValidateImage}
@@ -935,39 +1005,51 @@ function GeneratePageContent() {
                 Continuer vers l'export →
               </Button>
               
-              {/* Upload images vers Firebase Storage */}
-              {savedProductId && user && (mainImage || galleryImages.length > 0) && (
+              {/* Upload images vers Firebase Storage ou sauvegarde URL externe */}
+              {savedProductId && user && ((mainImage && !useExternalUrl) || (externalImageUrl && useExternalUrl)) && (
                 <Button 
                   onClick={async () => {
+                    console.log('[Image Save] Starting image save process...');
                     setIsSaving(true);
                     try {
                       let imageUrl = '';
                       let galleryUrls: string[] = [];
 
-                      // Upload image principale
-                      if (mainImage) {
-                        imageUrl = await uploadProductImage(user.uid, savedProductId, mainImage, 'main');
-                        console.log('✅ Image principale uploadée :', imageUrl);
-                      }
+                      if (useExternalUrl) {
+                        console.log('[Image Save] Using external URL. Setting imageUrl directly.');
+                        imageUrl = externalImageUrl;
+                        console.log('✅ [Image Save] External URL saved:', imageUrl);
+                      } else {
+                        // Upload vers Firebase
+                        if (mainImage) {
+                          console.log('[Image Save] Attempting main image upload to Firebase...');
+                          imageUrl = await uploadProductImage(user.uid, savedProductId, mainImage, 'main');
+                          console.log('✅ [Image Save] Main image uploaded:', imageUrl);
+                        }
 
-                      // Upload galerie
-                      if (galleryImages.length > 0) {
-                        galleryUrls = await uploadGalleryImages(user.uid, savedProductId, galleryImages);
-                        console.log(`✅ ${galleryUrls.length} images galerie uploadées`);
+                        // Upload galerie
+                        if (galleryImages.length > 0) {
+                          console.log('[Image Save] Attempting gallery images upload to Firebase...');
+                          galleryUrls = await uploadGalleryImages(user.uid, savedProductId, galleryImages);
+                          console.log(`✅ [Image Save] ${galleryUrls.length} gallery images uploaded`);
+                        }
                       }
 
                       // Mettre à jour le produit avec les URLs
+                      console.log('[Image Save] Updating product in Firestore with image URLs...');
                       await saveProduct(user.uid, { 
                         id: savedProductId, 
                         imageUrl, 
                         galleryImages: galleryUrls 
                       });
+                      console.log('✅ [Image Save] Product updated in Firestore.');
 
                       alert('✅ Images sauvegardées !');
                     } catch (error) {
-                      console.error('❌ Erreur upload images :', error);
-                      alert('❌ Erreur lors de l\'upload des images');
+                      console.error('❌ [Image Save] Error during image save:', error);
+                      alert('❌ Erreur lors de la sauvegarde des images');
                     } finally {
+                      console.log('[Image Save] Image save process finished. Setting isSaving to false.');
                       setIsSaving(false);
                     }
                   }}
@@ -975,7 +1057,7 @@ function GeneratePageContent() {
                   className="w-full bg-gradient-to-r from-[#9333EA] to-[#6B46C1]"
                 >
                   {isSaving ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Upload en cours...</>
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sauvegarde en cours...</>
                   ) : (
                     <>📤 Sauvegarder les images</>
                   )}
@@ -988,7 +1070,7 @@ function GeneratePageContent() {
         {/* ==================== ONGLET 4 : EXPORT ==================== */}
         <TabsContent value="export" className="space-y-6">
           {/* Badge admin config chargée */}
-          {userProfile?.role === 'superadmin' && userProfile?.email === 'abderelmalki@gmail.com' && (
+          {(userProfile?.role === 'admin' || userProfile?.role === 'superadmin') && userProfile?.email === 'abderelmalki@gmail.com' && (
             <Alert className="bg-purple-50 border-purple-200">
               <CheckCircle2 className="h-4 w-4 text-purple-600" />
               <AlertDescription className="text-purple-800">
@@ -996,6 +1078,7 @@ function GeneratePageContent() {
               </AlertDescription>
             </Alert>
           )}
+  
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* Export CSV */}
@@ -1090,3 +1173,4 @@ export default function GeneratePage() {
     </ProtectedRoute>
   );
 }
+

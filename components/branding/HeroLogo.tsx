@@ -22,7 +22,7 @@ export default function HeroLogo() {
       {/* Logo */}
       <div className="relative w-48 h-48 flex items-center justify-center">
         <Image
-          src="https://res.cloudinary.com/dhjwimevi/image/upload/e_background_removal/v1764748415/icon_1_x7jpic.png"
+          src="https://res.cloudinary.com/dhjwimevi/image/upload/v1764753532/logo_1_qpyksp.png"
           alt="WooSenteur Logo"
           width={192}
           height={192}

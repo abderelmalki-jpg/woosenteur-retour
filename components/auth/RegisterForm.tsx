@@ -117,6 +117,28 @@ export default function RegisterForm() {
             </Alert>
           )}
 
+          {/* Bouton Se connecter en premier */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              Vous avez déjà un compte ?
+            </p>
+            <Link href="/login">
+              <Button variant="outline" className="w-full h-11 border-2 mb-4">
+                <Mail className="mr-2 h-4 w-4" />
+                Se connecter
+              </Button>
+            </Link>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-500">Ou créer un compte</span>
+            </div>
+          </div>
+
           {/* Avantages */}
           <div className="bg-gradient-to-r from-[#9333EA]/10 to-[#6B46C1]/10 rounded-lg p-3 space-y-1.5">
             <div className="flex items-center gap-2 text-sm">
@@ -256,12 +278,16 @@ export default function RegisterForm() {
         </CardContent>
 
         <CardFooter className="justify-center">
-          <div className="text-sm text-center text-gray-600">
-            Vous avez déjà un compte ?{' '}
-            <Link href="/login" className="font-semibold text-[#9333EA] hover:underline">
-              Se connecter
+          <p className="text-xs text-gray-500 text-center">
+            En créant un compte, vous acceptez nos{' '}
+            <Link href="/terms" className="underline">
+              Conditions d'utilisation
+            </Link>{' '}
+            et notre{' '}
+            <Link href="/privacy" className="underline">
+              Politique de confidentialité
             </Link>
-          </div>
+          </p>
         </CardFooter>
       </Card>
     </div>

@@ -9,16 +9,10 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import {
   User as FirebaseUser,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  updateProfile,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
 import { createUser, getUser, updateLastLogin, User } from '@/lib/firebase/users';
@@ -27,11 +21,7 @@ interface AuthContextType {
   user: FirebaseUser | null;
   userProfile: User | null;
   loading: boolean;
-  register: (email: string, password: string, displayName: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
-  loginWithMagicLink: (email: string) => Promise<void>;
-  completeMagicLinkLogin: () => Promise<void>;
   logout: () => Promise<void>;
   refreshUserProfile: () => Promise<void>;
 }
@@ -84,39 +74,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   }, []);
 
-  // Inscription Email/Password
-  async function register(email: string, password: string, displayName: string) {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Mettre à jour le displayName Firebase
-      await updateProfile(userCredential.user, { displayName });
-      
-      // Créer profil Firestore
-      await createUser(userCredential.user.uid, email, {
-        displayName,
-        country: 'FR', // Détection IP côté client recommandée
-        language: 'fr',
-      });
-
-      console.log('✅ Compte créé:', email);
-    } catch (error: any) {
-      console.error('❌ Erreur inscription:', error);
-      throw new Error(getAuthErrorMessage(error.code));
-    }
-  }
-
-  // Connexion Email/Password
-  async function login(email: string, password: string) {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log('✅ Connexion réussie:', email);
-    } catch (error: any) {
-      console.error('❌ Erreur connexion:', error);
-      throw new Error(getAuthErrorMessage(error.code));
-    }
-  }
-
   // Connexion Google OAuth
   async function loginWithGoogle() {
     try {
@@ -145,56 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Connexion Magic Link (sans mot de passe)
-  async function loginWithMagicLink(email: string) {
-    try {
-      const actionCodeSettings = {
-        url: window.location.origin + '/auth/verify',
-        handleCodeInApp: true,
-      };
-      
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      
-      // Sauvegarder l'email pour compléter la connexion
-      window.localStorage.setItem('emailForSignIn', email);
-      console.log('✅ Lien de connexion envoyé à:', email);
-    } catch (error: any) {
-      console.error('❌ Erreur Magic Link:', error);
-      throw new Error(getAuthErrorMessage(error.code));
-    }
-  }
-
-  // Compléter connexion Magic Link
-  async function completeMagicLinkLogin() {
-    try {
-      if (isSignInWithEmailLink(auth, window.location.href)) {
-        let email = window.localStorage.getItem('emailForSignIn');
-        if (!email) {
-          email = window.prompt('Veuillez confirmer votre adresse email');
-        }
-        
-        if (!email) throw new Error('Email requis pour compléter la connexion');
-        
-        const result = await signInWithEmailLink(auth, email, window.location.href);
-        window.localStorage.removeItem('emailForSignIn');
-        
-        // Créer profil si n'existe pas
-        const existingProfile = await getUser(result.user.uid);
-        if (!existingProfile) {
-          await createUser(result.user.uid, email, {
-            displayName: result.user.displayName || undefined,
-            country: 'FR',
-            language: 'fr',
-          });
-        }
-
-        console.log('✅ Connexion Magic Link réussie:', email);
-      }
-    } catch (error: any) {
-      console.error('❌ Erreur Magic Link completion:', error);
-      throw new Error(getAuthErrorMessage(error.code));
-    }
-  }
 
   // Déconnexion
   async function logout() {
@@ -221,11 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         userProfile,
         loading,
-        register,
-        login,
         loginWithGoogle,
-        loginWithMagicLink,
-        completeMagicLinkLogin,
         logout,
         refreshUserProfile,
       }}

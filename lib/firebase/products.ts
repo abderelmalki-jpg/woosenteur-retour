@@ -1,3 +1,21 @@
+// Ajout du rôle admin à abderelmalki@gmail.com (à faire dans Firestore)
+// Exemple Firestore :
+// users/{userId} : { email: 'abderelmalki@gmail.com', role: 'admin', ... }
+
+/**
+ * Ajoute le rôle admin à un utilisateur Firestore
+ * @param userId - UID Firebase
+ */
+export async function setAdminRole(userId: string) {
+  const userRef = firestoreDoc(db, `users/${userId}`);
+  await setDoc(userRef, { role: 'admin' }, { merge: true });
+  console.log(`✅ Rôle admin ajouté à l'utilisateur ${userId}`);
+}
+
+// Supprime tous les champs undefined d'un objet (utile pour Firestore)
+function removeUndefined(obj: any) {
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined));
+}
 /**
  * Firebase Firestore - Gestion des produits
  * Structure : /users/{userId}/products/{productId}
@@ -7,7 +25,7 @@
 import { db, storage } from './config';
 import { 
   collection, 
-  doc, 
+  doc as firestoreDoc, 
   setDoc, 
   getDoc, 
   getDocs, 
@@ -26,6 +44,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
  */
 export interface Product {
   id: string;
+  userId: string;
   productName: string;
   brand: string;
   category?: string;
@@ -66,8 +85,16 @@ export async function saveProduct(userId: string, productData: Partial<Product>)
     throw new Error('User must be authenticated to save products');
   }
 
-  const productId = productData.id || doc(collection(db, `users/${userId}/products`)).id;
-  const productRef = doc(db, `users/${userId}/products`, productId);
+  // Ajout de valeurs par défaut pour les champs usageTips et brandInfo
+  if (!productData.usageTips) {
+    productData.usageTips = 'Aucun conseil disponible.';
+  }
+  if (!productData.brandInfo) {
+    productData.brandInfo = 'Informations sur la marque indisponibles.';
+  }
+
+  const productId = productData.id || firestoreDoc(collection(db, `users/${userId}/products`)).id;
+  const productRef = firestoreDoc(db, `users/${userId}/products`, productId);
 
   const product: Product = {
     id: productId,
@@ -75,14 +102,18 @@ export async function saveProduct(userId: string, productData: Partial<Product>)
     brand: productData.brand || '',
     longDescription: productData.longDescription || '',
     generationDate: productData.generationDate || new Date(),
+    userId,
     ...productData,
   };
 
-  await setDoc(productRef, {
+  // Supprimer tous les champs undefined avant sauvegarde
+  const cleanedProduct = removeUndefined({
     ...product,
     generationDate: Timestamp.fromDate(product.generationDate),
     updatedAt: serverTimestamp(),
   });
+
+  await setDoc(productRef, cleanedProduct);
 
   console.log(`✅ Produit sauvegardé : ${productId} pour user ${userId}`);
   return productId;
@@ -92,7 +123,7 @@ export async function saveProduct(userId: string, productData: Partial<Product>)
  * Récupère un produit par son ID
  */
 export async function getProduct(userId: string, productId: string): Promise<Product | null> {
-  const productRef = doc(db, `users/${userId}/products`, productId);
+  const productRef = firestoreDoc(db, `users/${userId}/products`, productId);
   const productSnap = await getDoc(productRef);
 
   if (!productSnap.exists()) {
@@ -115,10 +146,10 @@ export async function listProducts(userId: string): Promise<Product[]> {
   const q = query(productsRef, orderBy('generationDate', 'desc'));
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map(doc => ({
-    ...doc.data(),
-    id: doc.id,
-    generationDate: doc.data().generationDate?.toDate() || new Date(),
+  return snapshot.docs.map(docSnap => ({
+    ...docSnap.data(),
+    id: docSnap.id,
+    generationDate: docSnap.data().generationDate?.toDate() || new Date(),
   } as Product));
 }
 
@@ -130,7 +161,7 @@ export async function updateProduct(
   productId: string, 
   updates: Partial<Product>
 ): Promise<void> {
-  const productRef = doc(db, `users/${userId}/products`, productId);
+  const productRef = firestoreDoc(db, `users/${userId}/products`, productId);
   await updateDoc(productRef, {
     ...updates,
     updatedAt: serverTimestamp(),
@@ -142,7 +173,7 @@ export async function updateProduct(
  * Supprime un produit
  */
 export async function deleteProduct(userId: string, productId: string): Promise<void> {
-  const productRef = doc(db, `users/${userId}/products`, productId);
+  const productRef = firestoreDoc(db, `users/${userId}/products`, productId);
   
   // Supprimer aussi les images associées
   const product = await getProduct(userId, productId);
@@ -186,9 +217,15 @@ export async function uploadProductImage(
 ): Promise<string> {
   const timestamp = Date.now();
   const filename = `${type}_${timestamp}_${file.name}`;
-  const storageRef = ref(storage, `users/${userId}/products/${productId}/${filename}`);
+  const storageRef = ref(storage, `products/${userId}/${productId}/${filename}`);
 
-  await uploadBytes(storageRef, file);
+  // Upload avec métadonnées pour rendre l'image vraiment publique (sans token)
+  await uploadBytes(storageRef, file, {
+    contentType: file.type,
+    customMetadata: {
+      firebaseStorageDownloadTokens: ""
+    }
+  });
   const downloadURL = await getDownloadURL(storageRef);
 
   console.log(`✅ Image uploadée : ${filename}`);

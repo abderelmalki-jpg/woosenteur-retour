@@ -1,0 +1,8 @@
+[
+    {
+      "origin": ["http://localhost:3000", "http://192.168.1.8:3000", "https://woosenteur.fr"],
+      "method": ["GET", "PUT", "POST", "DELETE"],
+      "maxAgeSeconds": 3600,
+      "responseHeader": ["Content-Type"]
+    }
+  ]

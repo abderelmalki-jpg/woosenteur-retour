@@ -3,13 +3,14 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 
+// Configuration Firebase client (fixée, ne pas utiliser process.env côté client)
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyBkh9L80CtfJSOHUf4WtRg8qf-UY_L-Vdw",
+  authDomain: "studio-667958240-ed1db.firebaseapp.com",
+  projectId: "studio-667958240-ed1db",
+  storageBucket: "studio-667958240-ed1db.appspot.com",
+  messagingSenderId: "233487992032",
+  appId: "1:233487992032:web:f3a99a8dd39128c1f9fc85"
 };
 
 // Initialize Firebase (singleton pattern)
